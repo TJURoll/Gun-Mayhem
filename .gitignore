@@ -1,0 +1,14 @@
+## 项目构建开始时，每个同学本地都要cocos new一个项目
+
+## 存放用于构建项目的东西，不需要同步，每个同学本地在cocos new时都应该有这个东西
+cocos2d/
+## Resources里面会有很多图片、字体、音频等，不建议在git上同步，可以私下有其他方式同步，比如文件服务器、网盘等
+Resources/
+## 本地cmake出来的东西（可能不叫win-build，以cmake构建时命名为准），不需要同步，每次拉取新代码之前，都可以删除这个文件夹，拉完代码重新cmake
+win32-build/
+
+## 其余的文件基本是必须同步的，比如：
+# Classes/   存放逻辑代码，必须同步
+# proj.*/    跨平台配置，通常不会更改，可以同步
+# .cocos-project.json  cocos构建配置，必须同步
+# CMakeLists.txt  Cmake构建配置，必须同步
