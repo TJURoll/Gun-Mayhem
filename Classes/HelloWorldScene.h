@@ -29,15 +29,12 @@
 
 class HelloWorld : public cocos2d::Scene
 {
+private:
+    void SwitchToStartScene(float);
 public:
-    static cocos2d::Scene* createScene();
 
     virtual bool init();
-    
-    // a selector callback
-     void SwitchToStartScene(float);
-    
-    // implement the "static create()" method manually
+
     CREATE_FUNC(HelloWorld);
 };
 

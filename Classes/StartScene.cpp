@@ -1,51 +1,101 @@
 #include "StartScene.h" 
-//#include "GameScene.h"
-//创建GameScene后取消注释上句完成场景切换
-Scene* StartScene::createScene()
-{
-	return StartScene::create();
-}
+//#include "Control_SettingScene.h" 
+	
 bool StartScene::init()
 {
 	if (!Scene::init())
 	{
 		return false;
 	}
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	auto background = Sprite::create("background.png");
 	background->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	background->setPosition(origin.x, origin.y);
+	background->setPosition(Vec2(origin.x, origin.y));
 	auto contentSize = background->getContentSize();
-	background->setScale(visibleSize.width / contentSize.width, visibleSize.height / contentSize.height);;
+	background->setScale(visibleSize.width / contentSize.width, visibleSize.height / contentSize.height);
 	this->addChild(background);
 
-	auto label = Label::createWithTTF("Gun Mayhem", "fonts/Marker Felt.ttf", 24);
-	label->setTextColor(Color4B::BLUE);
+	auto label = Label::createWithTTF("Gun Mayhem", "fonts/Marker Felt.ttf", 96);
+	label->setTextColor(Color4B::GRAY);
 	label->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-	label->setPosition(visibleSize.width / 8, visibleSize.height * 9 / 10);
+	label->setPosition(origin.x + visibleSize.width / 20, origin.y + visibleSize.height * 19 / 20);
+	label->setScaleX(1.3f);
+	label->enableShadow();
 	this->addChild(label);
 
-	auto StartGameButton = ui::Button::create("choice.png", "unchoice.png");
-	StartGameButton->setScale(0.5);
-	StartGameButton->setTitleText("START");
-	StartGameButton->setTitleColor(Color3B::WHITE);
-	StartGameButton->setTitleFontSize(20);
-	StartGameButton->addTouchEventListener(CC_CALLBACK_2(StartScene::buttonCallBack, this));
-	StartGameButton->setPosition(Vec2(origin.x + visibleSize.width * 4 / 5, origin.y + visibleSize.height * 3 / 5));
-	this->addChild(StartGameButton);
+	auto gun = Sprite::create("guns.png");
+	gun->setRotation(-45);
+	gun->setTextureRect(Rect(0, 0, 100, 30));
+	gun->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	gun->setPosition(label->getPosition().x + label->getContentSize().width * 1.3f + gun->getContentSize().width / 2, label->getPosition().y - gun->getContentSize().height / 2 - 15);
+	gun->setScale(1.5f);
+	this->addChild(gun);
+
+
+	auto startGameButton = buttonCreate("Start", [](Ref* ref, Widget::TouchEventType type)
+		{
+			switch (type) {
+			case Widget::TouchEventType::ENDED:
+				//Director::getInstance()->replaceScene(GameScene::create());
+				break;
+			default:
+				break;
+			}
+		});
+	auto settingsButton = buttonCreate("Settings", [](Ref* ref, Widget::TouchEventType type)
+		{
+			switch (type) {
+			case Widget::TouchEventType::ENDED:
+				//Director::getInstance()->replaceScene(Control_SettingScene::create());
+				break;
+			default:
+				break;
+			}
+		});
+	auto exitButton = buttonCreate("Exit", [](Ref* ref, Widget::TouchEventType type)
+		{
+			switch (type) {
+			case Widget::TouchEventType::ENDED:
+				Director::getInstance()->end();
+				break;
+			default:
+				break;
+			}
+		});
+	buttonAdd({ startGameButton,settingsButton,exitButton });
 	return true;
 }
 
-void StartScene::buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type)
+Button* StartScene::buttonCreate(std::string titleText, pFunc switchSceneEvent)
 {
-	switch (type) {
-	case Widget::TouchEventType::ENDED:
-		//Director::getInstance()->replaceScene(GameScene::createScene());
-		//创建GameScene后取消注释上句完成场景切换
-		break;
-	default:
-		break;
+	Button* p = new(std::nothrow) Button;
+	if (p == nullptr)
+	{
+		return nullptr;
 	}
+	p = Button::create("choice.png", "unchoice.png");
+	p->setTitleText(titleText);
+	p->setTitleColor(Color3B::WHITE);
+	p->setTitleFontName("fonts/Marker Felt.ttf");
+	p->setTitleFontSize(48);
+	p->addTouchEventListener(switchSceneEvent);
+	return p;
 }
+
+void StartScene::buttonAdd(std::vector<Button*> buttonList)
+{
+	for (auto iterator = buttonList.begin(); iterator < buttonList.end(); iterator++)
+	{
+		(*iterator)->setPosition(Vec2(origin.x + visibleSize.width * 4 / 5,
+			origin.y + visibleSize.height * 3 / 5 - (iterator - buttonList.begin()) * 1.7f * (*iterator)->getContentSize().height));
+		this->addChild(*iterator);
+	}
+
+}
+
+StartScene::StartScene()
+{
+	visibleSize = Director::getInstance()->getVisibleSize();
+	origin = Director::getInstance()->getVisibleOrigin();
+}
+

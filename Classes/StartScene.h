@@ -2,21 +2,22 @@
 #define _STARTSCENE_
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+
 using namespace cocos2d;
 using namespace ui;
+typedef void (*pFunc)(Ref*, Widget::TouchEventType);
 class StartScene : public Scene
 {
+private:
+	Size visibleSize;
+	Vec2 origin;
+	Button* buttonCreate(std::string titleText,pFunc switchSceneEvent);
+	void buttonAdd(std::vector<Button*> buttonList);
 public:
-	static cocos2d::Scene* createScene();
+	StartScene();
 
 	virtual bool init();
 
-	// a selector callback
-	void buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type);
-
-	// implement the "static create()" method manually
 	CREATE_FUNC(StartScene);
-	//private:
-	   // Button* ButtonCreate(const char* text)
 };
 #endif

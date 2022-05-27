@@ -34,7 +34,7 @@ using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1536, 1024);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
@@ -73,9 +73,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("GunMayhem", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
+        glview = GLViewImpl::createWithRect("Gun Mayhem", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
 #else
-        glview = GLViewImpl::create("GunMayhem");
+        glview = GLViewImpl::create("Gun Mayhem");
 #endif
         director->setOpenGLView(glview);
     }
@@ -111,7 +111,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
    // auto scene = HelloWorld::createScene();
 
     // run
-    director->runWithScene(TransitionFade::create(2.0f, HelloWorld::createScene()));
+    director->runWithScene(TransitionFade::create(2.0f, HelloWorld::create()));
    // Director::getInstance()->replaceScene(TransitionSlideInT::create(2.0f, MyHelloWorld::createScene()));
 
     return true;
