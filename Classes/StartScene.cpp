@@ -1,5 +1,5 @@
 #include "StartScene.h" 
-//#include "GameScene.h"
+#include "GameScene.h"
 //创建GameScene后取消注释上句完成场景切换
 Scene* StartScene::createScene()
 {
@@ -42,7 +42,7 @@ void StartScene::buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType ty
 {
 	switch (type) {
 	case Widget::TouchEventType::ENDED:
-		//Director::getInstance()->replaceScene(GameScene::createScene());
+		Director::getInstance()->replaceScene(GameScene::createScene());
 		//创建GameScene后取消注释上句完成场景切换
 		break;
 	default:
