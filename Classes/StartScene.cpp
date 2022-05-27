@@ -85,7 +85,7 @@ Button* StartScene::buttonCreate(std::string titleText, pFunc switchSceneEvent)
 	return p;
 }
 
-void StartScene::buttonAdd(std::vector<Button*> buttonList)
+void StartScene::buttonAdd(std::vector<Button*> buttonList) 
 {
 	for (auto iterator = buttonList.begin(); iterator < buttonList.end(); iterator++)
 	{
@@ -96,7 +96,7 @@ void StartScene::buttonAdd(std::vector<Button*> buttonList)
 
 }
 
-StartScene::StartScene()
+StartScene::StartScene()//构造函数中获取窗口相关参数 
 {
 	visibleSize = Director::getInstance()->getVisibleSize();
 	origin = Director::getInstance()->getVisibleOrigin();
