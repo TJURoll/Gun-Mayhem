@@ -1,5 +1,5 @@
 #include "StartScene.h" 
-#include "ControlSettingScene.h" 
+#include "Control_SettingScene.h" 
 #include "GameScene.h"
 bool StartScene::init()
 {
@@ -39,7 +39,7 @@ bool StartScene::init()
 		{
 			switch (type) {
 			case Widget::TouchEventType::ENDED:
-				Director::getInstance()->replaceScene(GameScene::createScene());
+				Director::getInstance()->pushScene(GameScene::createScene());
 				break;
 			default:
 				break;
@@ -49,7 +49,7 @@ bool StartScene::init()
 		{
 			switch (type) {
 			case Widget::TouchEventType::ENDED:
-				Director::getInstance()->replaceScene(ControlSettingScene::create());
+				Director::getInstance()->pushScene(ControlSettingScene::createScene());
 				break;
 			default:
 				break;
@@ -98,7 +98,8 @@ void StartScene::buttonAdd(std::vector<Button*> buttonList)
 
 StartScene::StartScene()
 {
+	//在构造函数中进行窗口变量获取和音乐播放
 	visibleSize = Director::getInstance()->getVisibleSize();
 	origin = Director::getInstance()->getVisibleOrigin();
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("bgmusic.mp3");
 }
-
