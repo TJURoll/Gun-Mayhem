@@ -1,6 +1,6 @@
 #include "StartScene.h" 
 #include "Control_SettingScene.h" 
-//#include "GameScene.h"
+#include "GameScene.h"
 bool StartScene::init()
 {
 	if (!Scene::init())
@@ -39,7 +39,7 @@ bool StartScene::init()
 		{
 			switch (type) {
 			case Widget::TouchEventType::ENDED:
-				//Director::getInstance()->pushScene(GameScene::createScene());
+				Director::getInstance()->pushScene(GameScene::createScene());
 				break;
 			default:
 				break;

@@ -8,13 +8,7 @@
 class GameScene : public cocos2d::Scene
 {
 private:
-	cocos2d::Sprite* _play;
-	cocos2d::TMXTiledMap* _tileMap;
-	cocos2d::TMXLayer* _collidable1;
-	cocos2d::TMXLayer* _collidable2;
-	Hero1 hero1 = ("warlord-helmet.png");//游戏中的玩家英雄
-	//int lastile = 0;
-	//cocos2d::Sprite* tile[1000];
+	Player hero1 = ("Hero.png");//游戏中的玩家英雄
 	std::map<cocos2d::EventKeyboard::KeyCode, bool>KeyMap;
 
 

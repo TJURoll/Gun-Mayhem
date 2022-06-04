@@ -78,21 +78,16 @@ bool GameScene::init()
 		auto body = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT);
 		auto edgeNode = Node::create();
 		edgeNode->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-		//此处+27并没有具体的意义，只是通过实践发现这样的位置设置比较合理
 		edgeNode->setPhysicsBody(body);
-		//GameBackground->setPhysicsBody(body);
 		this->addChild(edgeNode);
 	}
 
 	//初始化玩家控制角色
 	//hero1.hero->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	hero1.hero->setPosition(origin.x+visibleSize.width/2, origin.y+visibleSize.height-20);
-	auto bodyplayer = PhysicsBody::createBox(hero1.hero->getContentSize());
-	hero1.hero->setPhysicsBody(bodyplayer);
-	this->addChild(hero1.hero);
-
-	//
-	
+	hero1.sprite->setPosition(origin.x+visibleSize.width/2, origin.y+visibleSize.height-hero1.sprite->getContentSize().height);
+	auto bodyplayer = PhysicsBody::createBox(hero1.sprite->getContentSize());
+	hero1.sprite->setPhysicsBody(bodyplayer);
+	this->addChild(hero1.sprite);
 
 	/*以下创建监视器部分取自官方文档以及CSDN*/
 	/*创建键盘监视器*/
@@ -123,9 +118,11 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event)
 {
 	KeyMap[keycode] = true;
 	
-	auto Jump = JumpBy::create(1, Vec2(0,40), 40, 1);
-	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_SPACE)
-		hero1.jumpTo(80);
+	auto Jump = JumpBy::create(1, Vec2(0,80), 80, 1);
+	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_SPACE|| keycode == cocos2d::EventKeyboard::KeyCode::KEY_W)
+		hero1.sprite->runAction(MoveBy::create(0.5,Vec2(0,hero1.sprite->getContentSize().height*3)));
+	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_S)
+		hero1.sprite->runAction(MoveBy::create(0.5,Vec2(0, -hero1.sprite->getContentSize().height*2)));
 }
 
 
@@ -138,7 +135,7 @@ void GameScene::onMouseDown(Event* event)
 void GameScene::update(float dt)
 {
 	//旋转人物精灵
-	hero1.hero->runAction(RotateTo::create(0.1, 0));
+	hero1.sprite->runAction(RotateTo::create(0.1, 0));
 
 
 	float moveX(0);
@@ -152,7 +149,24 @@ void GameScene::update(float dt)
 	{
 		moveX = 4;
 	}
+
+	if (KeyMap[cocos2d::EventKeyboard::KeyCode::KEY_D] == false && KeyMap[cocos2d::EventKeyboard::KeyCode::KEY_A] == true && this->hero1.getDirection() == false)
+	{
+		/*如果先前英雄向右方向，并且按下了A，松开了D，则改变方向*/
+		this->hero1.changeTexture(true);//图像翻转
+
+		this->hero1.changeDirection(true);//储存数据翻转
+	}
+
+	if (KeyMap[cocos2d::EventKeyboard::KeyCode::KEY_D] == true && KeyMap[cocos2d::EventKeyboard::KeyCode::KEY_A] == false && this->hero1.getDirection() == true)
+	{
+		/*如果先前英雄向左方向，并且按下了D，松开了A，则改变方向*/
+		this->hero1.changeTexture(false);//图像翻转
+
+		this->hero1.changeDirection(false);//储存数据翻转
+	}
+
 	Vec2 rePosition(moveX, 0);
 	auto moveBy = MoveBy::create(0.5f, rePosition);
-	hero1.hero->runAction(moveBy);
+	hero1.sprite->runAction(moveBy);
 }
