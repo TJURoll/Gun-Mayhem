@@ -39,7 +39,7 @@ bool StartScene::init()
 		{
 			switch (type) {
 			case Widget::TouchEventType::ENDED:
-				Director::getInstance()->pushScene(GameScene::createScene());
+				Director::getInstance()->replaceScene(GameScene::createScene());
 				break;
 			default:
 				break;

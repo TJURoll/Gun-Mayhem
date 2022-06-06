@@ -3,10 +3,10 @@ USING_NS_CC;
 
 Scene* GameScene::createScene()
 {
-	auto scene = Scene::createWithPhysics();
+	auto scene = GameScene::create();
+	scene->initWithPhysics();
 	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-	auto layer = GameScene::create();
-	scene->addChild(layer);
+	scene->getPhysicsWorld()->setGravity(Vec2(0, -490.f));//设置了重力为490像素每秒的平方
 	return scene;
 }
 
@@ -22,25 +22,25 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	//创建背景地图
-		auto bg = Sprite::create("mpbg.png");
-		auto contentSize = bg->getContentSize();
-		float sizeTransform_x = visibleSize.width / contentSize.width;
-		float sizeTransform_y = visibleSize.height / contentSize.height;
-		bg->setScale(sizeTransform_x, sizeTransform_y);
-		bg->setAnchorPoint(Vec2(0.5, 0.5));
-		Size sizeOfbg = bg->getContentSize();
-		bg->setPosition(Vec2(visibleSize.width / 2 , visibleSize.height / 2));
-		this->addChild(bg);
-	
+	auto bg = Sprite::create("mpbg.png");
+	auto contentSize = bg->getContentSize();
+	float sizeTransform_x = visibleSize.width / contentSize.width;
+	float sizeTransform_y = visibleSize.height / contentSize.height;
+	bg->setScale(sizeTransform_x, sizeTransform_y);
+	bg->setAnchorPoint(Vec2(0.5, 0.5));
+	Size sizeOfbg = bg->getContentSize();
+	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	this->addChild(bg);
+
 
 	//创建平台物理效果
 	{
 		float transformX = contentSize.width / 300.0;
 		float transformY = contentSize.height / 176.0;
-		Size bodySize1 = cocos2d::Size((122 - 54)*transformX*sizeTransform_x , 1);
+		Size bodySize1 = cocos2d::Size((122 - 54) * transformX * sizeTransform_x, 1);
 		auto bodyPlatform1 = PhysicsBody::createEdgeBox(bodySize1);
 		auto Platform1 = Node::create();
-		Platform1->setPosition(Vec2((122 + 54) / 2 * transformX * sizeTransform_x, (176 - 50) * transformY* sizeTransform_y));
+		Platform1->setPosition(Vec2((122 + 54) / 2 * transformX * sizeTransform_x, (176 - 50) * transformY * sizeTransform_y));
 		Platform1->setPhysicsBody(bodyPlatform1);
 		this->addChild(Platform1);
 
@@ -54,14 +54,14 @@ bool GameScene::init()
 		Size bodySize3 = cocos2d::Size((213 - 37) * transformX * sizeTransform_x, 1);
 		auto bodyPlatform3 = PhysicsBody::createEdgeBox(bodySize3);
 		auto Platform3 = Node::create();
-		Platform3->setPosition(Vec2( (213 + 37) / 2 * transformX * sizeTransform_x, (176 - 105) * transformY * sizeTransform_y));
+		Platform3->setPosition(Vec2((213 + 37) / 2 * transformX * sizeTransform_x, (176 - 105) * transformY * sizeTransform_y));
 		Platform3->setPhysicsBody(bodyPlatform3);
 		this->addChild(Platform3);
 
 		Size bodySize4 = cocos2d::Size((246 - 29) * transformX * sizeTransform_x, 1);
 		auto bodyPlatform4 = PhysicsBody::createEdgeBox(bodySize4);
 		auto Platform4 = Node::create();
-		Platform4->setPosition(Vec2( (246 + 26) / 2 * transformX * sizeTransform_x, (176 - 132) * transformY * sizeTransform_y));
+		Platform4->setPosition(Vec2((246 + 26) / 2 * transformX * sizeTransform_x, (176 - 132) * transformY * sizeTransform_y));
 		Platform4->setPhysicsBody(bodyPlatform4);
 		this->addChild(Platform4);
 
@@ -72,7 +72,7 @@ bool GameScene::init()
 		Platform5->setPhysicsBody(bodyPlatform5);
 		this->addChild(Platform5);
 	}
-	
+
 	{
 		// 创建边界物理接触
 		auto body = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT);
@@ -84,14 +84,22 @@ bool GameScene::init()
 
 	//初始化玩家控制角色
 	//hero1.hero->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-	hero1.sprite->setPosition(origin.x+visibleSize.width/2, origin.y+visibleSize.height-hero1.sprite->getContentSize().height);
-	auto bodyplayer = PhysicsBody::createBox(hero1.sprite->getContentSize());
+	hero1.sprite->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - hero1.sprite->getContentSize().height);
+	auto bodyplayer = PhysicsBody::createBox(hero1.sprite->getContentSize(), PhysicsMaterial(1.f,0.f,1.f));//密度、恢复系数、摩擦
+	bodyplayer->setRotationEnable(false);//不可转动
+	bodyplayer->setCategoryBitmask(0b1111);
+	bodyplayer->setContactTestBitmask(0b1111);
+	bodyplayer->setMass(MASS);//设置质量
 	hero1.sprite->setPhysicsBody(bodyplayer);
+	hero1.sprite->setTag(0);//玩家标签设为0，建议友军为1、2、3，敌军为11、12、13
 	this->addChild(hero1.sprite);
+
+	Gun* gun = HandGun::create();
+	gun->bindShooter(hero1.sprite);
+	gun->addContactListener();
 
 	/*以下创建监视器部分取自官方文档以及CSDN*/
 	/*创建键盘监视器*/
-
 	auto listener = EventListenerKeyboard::create();
 	listener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	listener->onKeyReleased = [&](EventKeyboard::KeyCode keycode, Event* event)
@@ -104,33 +112,47 @@ bool GameScene::init()
 	EventListenerMouse* _mouseListener = EventListenerMouse::create();
 	//_mouseListener->onMouseMove = CC_CALLBACK_1(StartScene::onMouseMove, this);
 	//_mouseListener->onMouseUp = CC_CALLBACK_1(StartScene::onMouseUp, this);
-	_mouseListener->onMouseDown = CC_CALLBACK_1(GameScene::onMouseDown, this);
+	_mouseListener->onMouseDown = [=](Event* event) {
+		EventMouse* mouse = dynamic_cast<EventMouse*>(event);
+		switch (mouse->getMouseButton())
+		{
+		case EventMouse::MouseButton::BUTTON_LEFT:
+			CCLOG("press");
+			gun->fire(this, &hero1);
+			gun->stopAWhile(_mouseListener);
+			break;
+		case EventMouse::MouseButton::BUTTON_RIGHT:
+			gun->throwExplosives(this, &hero1);
+			break;
+		default:
+			break;
+		};
+	};
 	//_mouseListener->onMouseScroll = CC_CALLBACK_1(StartScene::onMouseScroll, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(_mouseListener, this);
 
 	//更新函数
 	this->scheduleUpdate();
-
 	return true;
 }
 
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event)
 {
 	KeyMap[keycode] = true;
-	
-	auto Jump = JumpBy::create(1, Vec2(0,80), 80, 1);
-	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_SPACE|| keycode == cocos2d::EventKeyboard::KeyCode::KEY_W)
-		hero1.sprite->runAction(MoveBy::create(0.5,Vec2(0,hero1.sprite->getContentSize().height*3)));
+
+	auto Jump = JumpBy::create(1, Vec2(0, 80), 80, 1);
+	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_SPACE || keycode == cocos2d::EventKeyboard::KeyCode::KEY_W)
+		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, hero1.sprite->getContentSize().height * 3)));
 	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_S)
-		hero1.sprite->runAction(MoveBy::create(0.5,Vec2(0, -hero1.sprite->getContentSize().height*2)));
+		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, -hero1.sprite->getContentSize().height * 2)));
 }
 
 
-void GameScene::onMouseDown(Event* event)
-{
-	/*此时鼠标按下，可以进行有关的操作*/
-	return;
-}
+//void GameScene::onMouseDown(Event* event)
+//{
+//	/*此时鼠标按下，可以进行有关的操作*/
+//
+//}
 
 void GameScene::update(float dt)
 {

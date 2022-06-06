@@ -25,4 +25,5 @@ Animation* Player::getHurt(int hurtValue)
 void Player::changeTexture(const bool direction)
 {
 	sprite->setFlippedX(direction);
+	dynamic_cast<Sprite*>(sprite->getChildByName("gun"))->setFlippedX(direction);//·­×ªÇ¹Ðµ
 }
