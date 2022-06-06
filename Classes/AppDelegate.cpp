@@ -26,7 +26,10 @@
 #include "HelloWorldScene.h"
 #include "editor-support/cocostudio/SimpleAudioEngine.h"
 // #define USE_AUDIO_ENGINE 1
-
+#define DEBUG
+#ifdef DEBUG
+#include "GameScene.h"
+#endif
 #if USE_AUDIO_ENGINE
 #include "audio/include/AudioEngine.h"
 using namespace cocos2d::experimental;
@@ -111,7 +114,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
    // auto scene = HelloWorld::createScene();
 
     // run
+#ifndef DEBUG
     director->runWithScene(TransitionFade::create(2.0f, HelloWorld::create()));
+#else
+    director->runWithScene(GameScene::createScene());
+#endif
    // Director::getInstance()->replaceScene(TransitionSlideInT::create(2.0f, MyHelloWorld::createScene()));
 
     return true;
