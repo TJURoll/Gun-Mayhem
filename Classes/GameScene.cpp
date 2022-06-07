@@ -1,4 +1,5 @@
 #include"GameScene.h"
+#include<string>
 USING_NS_CC;
 
 #define Platform1_x (122 + 54) / 2
@@ -169,13 +170,6 @@ bool GameScene::init()
 	listenerPhysics->onContactBegin = [this](PhysicsContact& contant)
 	{
 		hero1.setJumpTimes(2);
-		/*
-		int CategoryA=contant.getShapeA()->getCategoryBitmask();
-		int CategoryB = contant.getShapeB()->getCategoryBitmask();
-		int CollisionA = contant.getShapeA()->getCollisionBitmask();
-		int CollisionB = contant.getShapeB()->getCollisionBitmask();
-		if ((CategoryA & CollisionB) && (CategoryB & CollisionA))
-			refreshMask = true;*/
 		return true;
 	};
 	listenerPhysics->onContactPreSolve = [this](PhysicsContact& contant, PhysicsContactPreSolve& solve)
@@ -183,6 +177,18 @@ bool GameScene::init()
 		return true;
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listenerPhysics, this);
+
+	//生命系统的可视化
+	char Num;
+	auto Vitality = Sprite::create("vitality.png");
+	auto label = Label::createWithTTF("5", "fonts/Marker Felt.ttf", 32);
+	label->setTag(-10);
+	Vitality->setPosition(Vec2(Vitality->getContentSize().width/2, visibleSize.height - Vitality->getContentSize().height));
+	label->setPosition(Vec2(Vitality->getContentSize().width+label->getContentSize().width, visibleSize.height - Vitality->getContentSize().height));
+	this->addChild(label);
+	this->addChild(Vitality);
+
+
 
 	//更新函数
 	this->scheduleUpdate();
@@ -199,12 +205,6 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event)
 	{
 		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, hero1.sprite->getContentSize().height * 3)));
 		hero1.setJumpTimes(hero1.getJumpTimes() - 1);
-	}
-	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_S)
-	{
-		//hero1.sprite->getPhysicsBody()->setCollisionBitmask(hero1.sprite->getPhysicsBody()->getCollisionBitmask() >> 1);
-		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, -hero1.sprite->getContentSize().height*1.8)));
-		//refreshMask = false;
 	}
 }
 
@@ -263,18 +263,33 @@ void GameScene::update(float dt)
 	float transformX = contentSize.width / 300.0;
 	float transformY = contentSize.height / 176.0;
 	//解决跳跃时和物理引擎碰撞穿模的问题，刷新掩码
-	//if (refreshMask == true) 
-	//{
-		if (hero1.sprite->getPosition().y > Platform1_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
-			hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0111111);
-		else if (hero1.sprite->getPosition().y > Platform2_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
-			hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0011111);
-		else if (hero1.sprite->getPosition().y > Platform3_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
-			hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0001111);
-		else if (hero1.sprite->getPosition().y > Platform4_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
-			hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0000111);
-		else if (hero1.sprite->getPosition().y > Platform5_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
-			hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0000011);
-	//}
+	if (hero1.sprite->getPosition().y > Platform1_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
+		hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0111111);
+	else if (hero1.sprite->getPosition().y > Platform2_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
+		hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0011111);
+	else if (hero1.sprite->getPosition().y > Platform3_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
+		hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0001111);
+	else if (hero1.sprite->getPosition().y > Platform4_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
+		hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0000111);
+	else if (hero1.sprite->getPosition().y > Platform5_y * transformY * sizeTransform_y + hero1.sprite->getContentSize().height / 2)
+		hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0000011);
+	auto listener = EventListenerKeyboard::create();
+	//
+	listener->onKeyPressed = [&](EventKeyboard::KeyCode keycode, Event* event)
+	{
+		if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_S)
+		{
+			hero1.sprite->getPhysicsBody()->setCollisionBitmask(hero1.sprite->getPhysicsBody()->getCollisionBitmask() >> 1);
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	//
+
+	std::string Life = ":";
+	char Num = (hero1.getlifeNum() + '0');
+	Life += Num;
+	auto label = getChildByTag(-10);
+	static_cast<Label*>(label)->setString(Life);
+
 	hero1.sprite->runAction(moveBy);
 }
