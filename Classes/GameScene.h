@@ -5,6 +5,7 @@
 #include"Player.h"
 #include "Weapon.h"
 #include<map>
+#include "Entity.h"
 
 class GameScene : public cocos2d::Scene
 {
@@ -12,7 +13,7 @@ private:
 	const float MASS = 10.f;
 	Player hero1 = ("Hero.png");//游戏中的玩家英雄
 	std::map<cocos2d::EventKeyboard::KeyCode, bool>KeyMap;
-
+	EventListenerMouse* _mouseListener;
 public:
 	static cocos2d::Scene* createScene();
 
@@ -28,12 +29,21 @@ public:
 
 	//定义键盘操作的函数
 	void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);//按下按键监视函数
-	//void onMouseDown(Event* event);//按下鼠标动作监视函数
-	//定义鼠标操作的函数
 
+	//掉落武器
+	void dropWeapons();
 
-	// a selector callback
-	//void buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type);将此句删除
+	//dropWeapons中的函数
+	void addBoxes(float ft);
+
+	//设置边界的比特掩码
+	void setGroundBitMasks(Node* node);
+
+	//将物理接触的监听器添加到场景
+	void addContactListener();
+
+	//随机生成三种枪中的一个
+	Gun* randomGun();
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);

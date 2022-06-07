@@ -16,14 +16,13 @@ public:
 	Gun(float shootingInterval, int firepower, int bulletSpeed);
 	virtual void bindShooter(Sprite* shooter)=0;
 	void throwExplosives(Scene* scene, Entity* shooter);
-	void addContactListener();
 };
 class MachineGun : public Gun
 {
 public:
 	CREATE_FUNC(MachineGun);
 	virtual bool init();
-	MachineGun() :Gun(.05f, 3, 5000) {};
+	MachineGun() :Gun(.05f, 3, 4000) {};
 	virtual void bindShooter(Sprite* shooter);
 };
 class SniperGun :public  Gun
@@ -31,7 +30,7 @@ class SniperGun :public  Gun
 public:
 	CREATE_FUNC(SniperGun);
 	virtual bool init();
-	SniperGun() :Gun(.6f, 15, 10000) {};
+	SniperGun() :Gun(.6f, 15, 7000) {};
 	virtual void bindShooter(Sprite* shooter);
 };
 class HandGun :public Gun
@@ -39,6 +38,6 @@ class HandGun :public Gun
 public:
 	CREATE_FUNC(HandGun);
 	virtual bool init();
-	HandGun() :Gun(.3f, 8, 5000) {};
+	HandGun() :Gun(.3f, 8, 3000) {};
 	virtual void bindShooter(Sprite* shooter);
 };

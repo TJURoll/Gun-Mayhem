@@ -1,12 +1,5 @@
 #include "Weapon.h"
-Vec2 operator -(Vec2 v1, Vec2 v2)
-{
-	return Vec2(v1.x - v2.x, v1.y - v2.y);
-}
-float operator &(Vec2 v)
-{
-	return sqrt(v.x * v.x + v.y * v.y);
-}
+
 void Gun::stopAWhile(EventListener* Listener,float interval) {
 	if (!interval)
 		interval = this->shootingInterval;
@@ -23,10 +16,13 @@ void Gun::throwExplosives(Scene* scene, Entity* shooter)
 	explosive->setPosition(Vec2(position.x + (direction ? -50 : 50),position.y));
 	auto physicsBody = PhysicsBody::createBox(explosive->getContentSize(), PhysicsMaterial(100.f, 1.f, 0.0f));// 密度，修复，摩擦
 	physicsBody->setVelocity(Vec2(direction ? -100 : 100, 80));
-	physicsBody->setCategoryBitmask(0b1111);
-	physicsBody->setContactTestBitmask(0b1111);
+	physicsBody->setCategoryBitmask(0b0110);
+	physicsBody->setCollisionBitmask(0b1001);
+	physicsBody->setContactTestBitmask(0b1001);
 	explosive->setPhysicsBody(physicsBody);
 	scene->addChild(explosive);
+
+	//定时爆炸
 	auto boom = CallFunc::create([=]() {
 		explosive->setTexture("explode.png");
 		explosive->setScale(0.2);
@@ -35,41 +31,10 @@ void Gun::throwExplosives(Scene* scene, Entity* shooter)
 	explosive->runAction(Sequence::create(DelayTime::create(2.5f),boom, swell, RemoveSelf::create(), nullptr));
 
 }
-void Gun::addContactListener()
+
+
+void Gun::fire(Scene* scene, Entity* shooter)
 {
-	auto contactListener = EventListenerPhysicsContact::create();
-	contactListener->onContactBegin = [this](PhysicsContact& contact) {
-		Node* node[2] = { contact.getShapeA()->getBody()->getNode() ,contact.getShapeB()->getBody()->getNode() };
-		if (node[0] && node[1])
-		{
-			int tag[2] = { node[0]->getTag(),node[1]->getTag() };
-			for (int i = 0; i < 2; i++)
-			{
-				if (tag[i] == -2)
-				{
-
-					node[!i]->getPhysicsBody()->applyImpulse(Vec2((node[!i]->getPosition().x - node[i]->getPosition().x < 0 ? -400 : 400)*MASS, 100*MASS));
-					break;
-				}
-				if (tag[i] == -3)
-				{
-					node[!i]->getPhysicsBody()->applyImpulse(Vec2(30* MASS*(node[!i]->getPosition().x - node[i]->getPosition().x < 0 ? -firepower : firepower), 0));
-					auto boomEffect = [node, i]() {
-						dynamic_cast<Sprite*>(node[i])->setTexture("explodeboom.png");
-						node[i]->getPhysicsBody()->setDynamic(false);
-					};
-					node[i]->runAction(Sequence::create(CallFunc::create(boomEffect), DelayTime::create(.1f), RemoveSelf::create(), nullptr));
-					break;
-				}
-			}
-
-			CCLOG("onContact!!  tagA = %d, tagB = %d", tag[0], tag[1]);
-		}
-		return true;
-	};
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
-}
-void Gun::fire(Scene* scene, Entity* shooter) {
 	CCLOG("fire");
 
 	auto bullet = Sprite::create("bullet.png");
@@ -84,13 +49,25 @@ void Gun::fire(Scene* scene, Entity* shooter) {
 	physicsBody->setVelocity(Vec2(direction ? -bulletSpeed : bulletSpeed, 0));
 	physicsBody->setGravityEnable(false);
 	physicsBody->setRotationEnable(false);
-	physicsBody->setCategoryBitmask(0b1111);
-	physicsBody->setContactTestBitmask(0b1111);
+	if ((shooter->getTag()) / 10 == 0)//我方子弹
+	{
+		physicsBody->setCategoryBitmask(0b10010);
+		physicsBody->setCollisionBitmask(0b1000);
+		physicsBody->setContactTestBitmask(0b1000);
+	}
+	else//敌方子弹
+	{
+		physicsBody->setCategoryBitmask(0b10100);
+		physicsBody->setCollisionBitmask(0b0001);
+		physicsBody->setContactTestBitmask(0b0001);
+	}
 	bullet->setPhysicsBody(physicsBody);
+	std::string str(1, static_cast<char>(firepower));
+	bullet->setName(str);
 	bullet->setTag(-3);
 	scene->addChild(bullet);
-
 }
+
 Gun::Gun(float shootingInterval, int firepower, int bulletSpeed) :shootingInterval(shootingInterval), firepower(firepower), bulletSpeed(bulletSpeed) {}
 
 
