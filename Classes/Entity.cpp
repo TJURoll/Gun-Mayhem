@@ -29,10 +29,30 @@ void Entity::changeDirection(const bool I_direction)
 }
 
 Entity::Entity(std::string url){
-	lifeNum = 0;
+	lifeNum = 5;
+	HP = 10;
+	JumpTimes = 2;
 	auto pinfo = AutoPolygon::generatePolygon(url);
 
 	sprite=Sprite::create(pinfo);
 }//初始化参数列表
 
+void Entity::setlifeNum(int life)
+{
+	lifeNum = life;
+}
 
+int Entity::getlifeNum()
+{
+	return lifeNum;
+}
+
+int  Entity::getJumpTimes()
+{
+	return JumpTimes;
+}
+
+void Entity::setJumpTimes(int times)
+{
+	JumpTimes = times;
+}

@@ -19,11 +19,16 @@ public:
 	bool getDirection(void);//获取其行走方向,false向右，true向左
 	void changeDirection(const bool);//改变其行走方向
 	Sprite* sprite;
+	void setlifeNum(int life);
+	int getlifeNum();
+	int getJumpTimes();
+	void setJumpTimes(int times);
 private:
 
 protected:
 	int lifeNum;
 	bool direction = false;//用于判断其方向
 	//CC_PROPERTY(int, m_lifeNum, lifeNum);
-
+	int HP;
+	int JumpTimes;//跳跃的次数，默认最多的两次
 };
