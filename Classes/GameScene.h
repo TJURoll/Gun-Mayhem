@@ -3,9 +3,9 @@
 
 #include"cocos2d.h"
 #include"Player.h"
-#include "Weapon.h"
+#include"Weapon.h"
 #include<map>
-#include "Entity.h"
+#include"Entity.h"
 
 class GameScene : public cocos2d::Scene
 {
@@ -27,6 +27,7 @@ public:
 	//void setPlayerPosition(cocos2d::Vec2 position);//此函数重新设置精灵位置，检测精灵是否与障碍物碰撞
 	//cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);//把像素坐标点转换成地图瓦片坐标点
 
+private:
 	//定义键盘操作的函数
 	void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);//按下按键监视函数
 
@@ -34,7 +35,7 @@ public:
 	void dropWeapons();
 
 	//dropWeapons中的函数
-	void addBoxes(float ft);
+	void addBoxes(const float ft);
 
 	//设置边界的比特掩码
 	void setGroundBitMasks(Node* node);

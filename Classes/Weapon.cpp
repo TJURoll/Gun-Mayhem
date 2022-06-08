@@ -1,6 +1,6 @@
 #include "Weapon.h"
 
-void Gun::stopAWhile(EventListener* Listener,float interval) {
+void Gun::stopAWhile(EventListener* Listener, float interval) {
 	if (!interval)
 		interval = this->shootingInterval;
 	Listener->setEnabled(false);
@@ -13,7 +13,7 @@ void Gun::throwExplosives(Scene* scene, Entity* shooter)
 	auto explosive = Sprite::create("explosive.png");
 	bool direction = shooter->getDirection();//Ïò×óÎªtrue,ÏòÓÒÎªfalse
 	auto position = shooter->getSprite()->getPosition();
-	explosive->setPosition(Vec2(position.x + (direction ? -50 : 50),position.y));
+	explosive->setPosition(Vec2(position.x + (direction ? -50 : 50), position.y));
 	auto physicsBody = PhysicsBody::createBox(explosive->getContentSize(), PhysicsMaterial(100.f, 1.f, 0.0f));// ÃÜ¶È£¬ÐÞ¸´£¬Ä¦²Á
 	physicsBody->setVelocity(Vec2(direction ? -100 : 100, 80));
 	physicsBody->setCategoryBitmask(0b0110);
@@ -28,7 +28,7 @@ void Gun::throwExplosives(Scene* scene, Entity* shooter)
 		explosive->setScale(0.2);
 		explosive->setTag(-2); });
 	auto swell = ScaleTo::create(.2f, 10);
-	explosive->runAction(Sequence::create(DelayTime::create(2.5f),boom, swell, RemoveSelf::create(), nullptr));
+	explosive->runAction(Sequence::create(DelayTime::create(2.5f), boom, swell, RemoveSelf::create(), nullptr));
 
 }
 
@@ -43,7 +43,7 @@ void Gun::fire(Scene* scene, Entity* shooter)
 	bullet->setPosition(Vec2(position.x + (direction ? -20 : 20), position.y));
 	if (direction)
 		bullet->setFlippedX(true);
-	shooter->getSprite()->getPhysicsBody()->applyImpulse(Vec2(5*MASS*(direction ?firepower : -firepower),0));
+	shooter->getSprite()->getPhysicsBody()->applyImpulse(Vec2(5 * MASS * (direction ? firepower : -firepower), 0));
 
 	auto physicsBody = PhysicsBody::createBox(bullet->getContentSize(), PhysicsMaterial(100.f, 0.f, 0.0f));// ÃÜ¶È£¬ÐÞ¸´£¬Ä¦²Á
 	physicsBody->setVelocity(Vec2(direction ? -bulletSpeed : bulletSpeed, 0));
@@ -75,8 +75,8 @@ Gun::Gun(float shootingInterval, int firepower, int bulletSpeed) :shootingInterv
 bool MachineGun::init()
 {
 	this->setTexture("guns.png");
-	this->setTextureRect(Rect(-10, 0, 90, 27));	
-		return true;
+	this->setTextureRect(Rect(-10, 0, 90, 27));
+	return true;
 }
 
 void MachineGun::bindShooter(Sprite* shooter)
@@ -102,7 +102,7 @@ void SniperGun::bindShooter(Sprite* shooter)
 	this->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 	this->setScale(1.3);
 	auto size = shooter->getContentSize();
-	this->setPosition(Vec2(size.width / 2,size.height/2-8));
+	this->setPosition(Vec2(size.width / 2, size.height / 2 - 8));
 	shooter->addChild(this);
 }
 

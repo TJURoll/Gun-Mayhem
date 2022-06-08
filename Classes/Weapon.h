@@ -6,38 +6,38 @@ USING_NS_CC;
 class Gun :public Sprite
 {
 private:
-	 const float MASS=10.f;
-	float shootingInterval;
-	int firepower;
-	int bulletSpeed;
+	const float MASS = 10.f;
+	float shootingInterval;//射击间隔，由stopAWhile具体实现
+	int firepower;//击退效果
+	int bulletSpeed;//子弹速度
 public:
-	void stopAWhile(EventListener* Listener,float interval=0);
-	void fire(Scene* scene, Entity* shooter);
 	Gun(float shootingInterval, int firepower, int bulletSpeed);
-	virtual void bindShooter(Sprite* shooter)=0;
-	void throwExplosives(Scene* scene, Entity* shooter);
+	virtual void bindShooter(Sprite* shooter) = 0;//将枪和角色绑定
+	void stopAWhile(EventListener* Listener, float interval = 0);
+	void fire(Scene* scene, Entity* shooter);//开火
+	void throwExplosives(Scene* scene, Entity* shooter);//扔炸弹
 };
 class MachineGun : public Gun
 {
 public:
+	MachineGun() :Gun(.05f, 3, 4000) {};
 	CREATE_FUNC(MachineGun);
 	virtual bool init();
-	MachineGun() :Gun(.05f, 3, 4000) {};
 	virtual void bindShooter(Sprite* shooter);
 };
 class SniperGun :public  Gun
 {
 public:
+	SniperGun() :Gun(.6f, 15, 7000) {};
 	CREATE_FUNC(SniperGun);
 	virtual bool init();
-	SniperGun() :Gun(.6f, 15, 7000) {};
 	virtual void bindShooter(Sprite* shooter);
 };
 class HandGun :public Gun
 {
 public:
+	HandGun() :Gun(.3f, 8, 3000) {};
 	CREATE_FUNC(HandGun);
 	virtual bool init();
-	HandGun() :Gun(.3f, 8, 3000) {};
 	virtual void bindShooter(Sprite* shooter);
 };

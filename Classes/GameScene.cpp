@@ -6,7 +6,7 @@ Scene* GameScene::createScene()
 	auto scene = GameScene::create();
 	scene->initWithPhysics();
 	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-	scene->getPhysicsWorld()->setGravity(Vec2(0, -490.f));//设置了重力为490像素每秒的平方
+	scene->getPhysicsWorld()->setGravity(Vec2(0, -800.f));//设置了重力为800像素每秒的平方
 	return scene;
 }
 
@@ -33,7 +33,7 @@ bool GameScene::init()
 	this->addChild(bg);
 
 
-	//创建平台物理效果
+	/**************************************创建平台物理效果*******************************************************/
 	{
 		float transformX = contentSize.width / 300.0;
 		float transformY = contentSize.height / 176.0;
@@ -80,7 +80,7 @@ bool GameScene::init()
 
 	{
 		// 创建边界物理接触
-		auto body = PhysicsBody::createEdgeBox(visibleSize*1.5, PHYSICSBODY_MATERIAL_DEFAULT,20.0f);
+		auto body = PhysicsBody::createEdgeBox(visibleSize * 1.5, PHYSICSBODY_MATERIAL_DEFAULT, 20.0f);
 		auto edgeNode = Node::create();
 		edgeNode->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 		edgeNode->setPhysicsBody(body);
@@ -88,9 +88,9 @@ bool GameScene::init()
 		setGroundBitMasks(edgeNode);
 	}
 
-	//初始化玩家控制角色
-	hero1.sprite->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - hero1.sprite->getContentSize().height);
-	auto bodyplayer = PhysicsBody::createBox(hero1.sprite->getContentSize(), PhysicsMaterial(1.f,0.f,1.f));//密度、恢复系数、摩擦
+	/*********************************************初始化玩家控制角色*******************************************************/
+	hero1.sprite->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + hero1.sprite->getContentSize().height);
+	auto bodyplayer = PhysicsBody::createBox(hero1.sprite->getContentSize(), PhysicsMaterial(1.f, 0.f, .8f));//密度、恢复系数、摩擦
 	bodyplayer->setRotationEnable(false);//不可转动
 	bodyplayer->setCategoryBitmask(0b1111);
 	bodyplayer->setCollisionBitmask(0b0100);
@@ -103,11 +103,14 @@ bool GameScene::init()
 	hero1.sprite->setTag(0);//玩家标签设为0
 	this->addChild(hero1.sprite);
 
+	/*********************************************玩家初始枪械*******************************************************/
 	Gun* initGun = HandGun::create();
 	initGun->bindShooter(hero1.sprite);
-	addContactListener();
 
+	/*********************************************掉落武器***********************************************************/
 	dropWeapons();
+
+	/*********************************************监视器创建*********************************************************/
 	/*以下创建监视器部分取自官方文档以及CSDN*/
 	/*创建键盘监视器*/
 	auto listener = EventListenerKeyboard::create();
@@ -119,16 +122,14 @@ bool GameScene::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
 	/*创建鼠标监视器*/
-	 _mouseListener = EventListenerMouse::create();
-	//_mouseListener->onMouseMove = CC_CALLBACK_1(StartScene::onMouseMove, this);
-	//_mouseListener->onMouseUp = CC_CALLBACK_1(StartScene::onMouseUp, this);
+	_mouseListener = EventListenerMouse::create();//鼠标监视器直接作为了GameScene成员
 	_mouseListener->onMouseDown = [=](Event* event) {
 		EventMouse* mouse = dynamic_cast<EventMouse*>(event);
 		switch (mouse->getMouseButton())
 		{
 		case EventMouse::MouseButton::BUTTON_LEFT:
 			CCLOG("press");
-			dynamic_cast<Gun*>(hero1.sprite->getChildByName("gun"))->fire(this, &hero1);
+			dynamic_cast<Gun*>(hero1.sprite->getChildByName("gun"))->fire(this, &hero1);//寻找到角色之中名为gun的child，转为Gun类型
 			dynamic_cast<Gun*>(hero1.sprite->getChildByName("gun"))->stopAWhile(_mouseListener);
 			break;
 		case EventMouse::MouseButton::BUTTON_RIGHT:
@@ -138,11 +139,30 @@ bool GameScene::init()
 			break;
 		};
 	};
-	//_mouseListener->onMouseScroll = CC_CALLBACK_1(StartScene::onMouseScroll, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(_mouseListener, this);
 
+	/*创建碰撞监视器*/
+	//1.刷新跳跃次数的碰撞监听器
+	auto listenerPhysics = EventListenerPhysicsContact::create();
+	listenerPhysics->onContactBegin = [this](PhysicsContact& contact)
+	{
+		Node* node[2] = { contact.getShapeA()->getBody()->getNode() ,contact.getShapeB()->getBody()->getNode() };
+		if (node[0] && node[1])
+		{
+			int tag[2] = { node[0]->getTag(),node[1]->getTag() };
+			for (int i = 0; i < 2; i++)
+				if (tag[i] == 0 && tag[!i] == 100)
+					hero1.setJumpTimes(2);
+			CCLOG("onContact!!  tagA = %d, tagB = %d", tag[0], tag[1]);
+		}
 
-	//更新函数
+		return true;
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listenerPhysics, this);
+	//2.检测道具碰撞相关的监听器
+	addContactListener();//监听器直接加在了场景之上
+
+   //更新函数
 	this->scheduleUpdate();
 	return true;
 }
@@ -151,11 +171,19 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event)
 {
 	KeyMap[keycode] = true;
 
-	auto Jump = JumpBy::create(1, Vec2(0, 80), 80, 1);
-	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_SPACE || keycode == cocos2d::EventKeyboard::KeyCode::KEY_W)
-		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, hero1.sprite->getContentSize().height * 2.8)));
+	//	auto Jump = JumpBy::create(1, Vec2(0, 80), 80, 1);
+
+	if ((keycode == cocos2d::EventKeyboard::KeyCode::KEY_SPACE || keycode == cocos2d::EventKeyboard::KeyCode::KEY_W)
+		&& hero1.getJumpTimes() > 0)
+	{
+		auto DisableCollision = CallFunc::create([this]() {hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0000); });//不允许碰撞，防止穿模时出现的问题
+		auto jump = MoveBy::create(0.5, Vec2(0, hero1.sprite->getContentSize().height * 3.0));
+		auto EnableCollision = CallFunc::create([this]() {hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0100); });//恢复原有的CollisionBitmask
+		hero1.sprite->runAction(Sequence::create(DisableCollision, jump, EnableCollision, nullptr));
+		hero1.setJumpTimes(hero1.getJumpTimes() - 1);
+	}
 	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_S)
-		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, -hero1.sprite->getContentSize().height*2 )));
+		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, -hero1.sprite->getContentSize().height * 2)));
 }
 
 void GameScene::dropWeapons()
@@ -167,13 +195,13 @@ void GameScene::dropWeapons()
 }
 void GameScene::setGroundBitMasks(Node* node)
 {
-	auto physicsBody=node->getPhysicsBody();
+	auto physicsBody = node->getPhysicsBody();
 	physicsBody->setCategoryBitmask(0b1111);
 	physicsBody->setCollisionBitmask(0b1111);
 	physicsBody->setContactTestBitmask(0b11001);
 	node->setTag(100);
 }
-void GameScene::addBoxes(float ft)
+void GameScene::addBoxes(const float ft)
 {
 	auto box = Sprite::create("box.png");
 	auto boxContentSize = box->getContentSize();
@@ -182,7 +210,7 @@ void GameScene::addBoxes(float ft)
 	int maxX = sceneSize.width - minX;
 	int rangeX = maxX - minX;
 	int randomX = (rand() % rangeX) + minX;
-    box->setPosition(Vec2(randomX, sceneSize.height));//X坐标随机,Y坐标为顶
+	box->setPosition(Vec2(randomX, sceneSize.height));//X坐标随机,Y坐标为顶
 	auto physicsBody = PhysicsBody::createBox(box->getContentSize(), PhysicsMaterial(10000.f, 0.f, 1.f));
 	physicsBody->setCategoryBitmask(0b0110);
 	physicsBody->setCollisionBitmask(0b1001);
@@ -231,6 +259,20 @@ void GameScene::update(float dt)
 	Vec2 rePosition(moveX, 0);
 	auto moveBy = MoveBy::create(0.5f, rePosition);
 	hero1.sprite->runAction(moveBy);
+
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	if (hero1.sprite->getPositionY() < 0)
+	{
+		hero1.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + hero1.sprite->getContentSize().height));//回到初始位置
+		hero1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		hero1.setlifeNum(hero1.getlifeNum() - 1);
+	}
+	if (hero1.getlifeNum() == 0)//当玩家的命为0时结束游戏
+	{
+		;//切换场景
+	}
 }
 void GameScene::addContactListener()
 {
@@ -296,3 +338,5 @@ Gun* GameScene::randomGun()
 	}
 	return p;
 }
+
+

@@ -26,7 +26,7 @@
 #include "HelloWorldScene.h"
 #include "editor-support/cocostudio/SimpleAudioEngine.h"
 // #define USE_AUDIO_ENGINE 1
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #include "GameScene.h"
 #endif

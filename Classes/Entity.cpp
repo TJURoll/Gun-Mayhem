@@ -12,7 +12,7 @@ bool Entity::whetherCanMove(const Vec2 position)
 
 void Entity::bindSpirite(Sprite* _sprite)
 {
-	if(sprite!=nullptr)
+	if (sprite != nullptr)
 		sprite->removeFromParentAndCleanup(true);
 
 	sprite = _sprite;
@@ -28,11 +28,30 @@ void Entity::changeDirection(const bool I_direction)
 	direction = I_direction;
 }
 
-Entity::Entity(std::string url){
-	lifeNum = 0;
+
+Entity::Entity(std::string url) {
+	lifeNum = 5;
+	JumpTimes = 2;
 	auto pinfo = AutoPolygon::generatePolygon(url);
 
-	sprite=Sprite::create(pinfo);
+	sprite = Sprite::create(pinfo);
 }//初始化参数列表
 
+void Entity::setlifeNum(int life)
+{
+	lifeNum = life;
+}
 
+int Entity::getlifeNum() const
+{
+	return lifeNum;
+}
+int  Entity::getJumpTimes() const
+{
+	return JumpTimes;
+}
+
+void Entity::setJumpTimes(int times)
+{
+	JumpTimes = times;
+}
