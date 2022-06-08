@@ -6,12 +6,15 @@
 #include"Weapon.h"
 #include<map>
 #include"Entity.h"
+#include"Monster.h"
 
 class GameScene : public cocos2d::Scene
 {
 private:
 	const float MASS = 10.f;
 	Player hero1 = ("Hero.png");//游戏中的玩家英雄
+	Monster monster1 = ("monster.png");//游戏中的怪物1
+
 	std::map<cocos2d::EventKeyboard::KeyCode, bool>KeyMap;
 	EventListenerMouse* _mouseListener;
 public:
