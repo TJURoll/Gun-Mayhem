@@ -103,9 +103,26 @@ bool GameScene::init()
 	hero1.sprite->setTag(0);//玩家标签设为0
 	this->addChild(hero1.sprite);
 
+	/*********************************************初始化AI怪物01角色*******************************************************/
+	monster1.sprite->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + hero1.sprite->getContentSize().height);
+	auto bodymonster1 = PhysicsBody::createBox(monster1.sprite->getContentSize(), PhysicsMaterial(1.f, 0.f, .8f));
+	bodymonster1->setRotationEnable(false);
+	bodymonster1->setCategoryBitmask(0b1111);
+	bodymonster1->setCollisionBitmask(0b0010);
+	bodymonster1->setContactTestBitmask(0b0010);//敌方角色的掩码
+	bodymonster1->setMass(MASS);
+	monster1.sprite->setPhysicsBody(bodymonster1);
+	monster1.sprite->setTag(10);//第一个怪物标签设为10
+	this->addChild(monster1.sprite);
+
+
 	/*********************************************玩家初始枪械*******************************************************/
 	Gun* initGun = HandGun::create();
 	initGun->bindShooter(hero1.sprite);
+
+	/********************************************AI怪物01初始枪械*******************************************************/
+	Gun* initMonsterGun = MachineGun::create();
+	initMonsterGun->bindShooter(monster1.sprite);
 
 	/*********************************************掉落武器***********************************************************/
 	dropWeapons();
@@ -269,10 +286,18 @@ void GameScene::update(float dt)
 		hero1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		hero1.setlifeNum(hero1.getlifeNum() - 1);
 	}
+	if (monster1.sprite->getPositionY() < 0)
+	{
+		monster1.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + monster1.sprite->getContentSize().height));//回到初始位置
+		monster1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		monster1.setlifeNum(monster1.getlifeNum() - 1);
+	}
 	if (hero1.getlifeNum() == 0)//当玩家的命为0时结束游戏
 	{
 		;//切换场景
 	}
+
+	this->monster1.AIUpdate(dt, hero1.sprite->getPosition(),this);
 }
 void GameScene::addContactListener()
 {
