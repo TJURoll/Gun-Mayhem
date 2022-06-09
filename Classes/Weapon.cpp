@@ -24,6 +24,7 @@ void Gun::throwExplosives(Scene* scene, Entity* shooter)
 
 	//定时爆炸
 	auto boom = CallFunc::create([=]() {
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Music/boom.mp3");
 		explosive->setTexture("explode.png");
 		explosive->setScale(0.2);
 		explosive->setTag(-2); });
@@ -36,7 +37,7 @@ void Gun::throwExplosives(Scene* scene, Entity* shooter)
 void Gun::fire(Scene* scene, Entity* shooter)
 {
 	CCLOG("fire");
-
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Music/fire.mp3");
 	auto bullet = Sprite::create("bullet.png");
 	bool direction = shooter->getDirection();//向左为true,向右为false
 	auto position = shooter->getSprite()->getPosition();

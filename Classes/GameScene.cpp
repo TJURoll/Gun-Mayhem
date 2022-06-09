@@ -207,6 +207,8 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event)
 	}
 	if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_S)
 		hero1.sprite->runAction(MoveBy::create(0.5, Vec2(0, -hero1.sprite->getContentSize().height * 2)));
+	/*if (keycode == cocos2d::EventKeyboard::KeyCode::KEY_P)
+		Director::getInstance()->pushScene(PauseScene::createScene());*/
 }
 
 void GameScene::dropWeapons()
