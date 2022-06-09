@@ -95,7 +95,7 @@ void Monster::AIUpdate(float dt,const Vec2& posOfPlayer, Scene* scene)
 				return;
 			auto DisableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0000); });//不允许碰撞，防止穿模时出现的问题
 			auto jump = MoveBy::create(0.5, Vec2(0, this->sprite->getContentSize().height * 2.6f));
-			auto EnableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0100); });//恢复原有的CollisionBitmask
+			auto EnableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0010); });//恢复原有的CollisionBitmask
 			this->sprite->runAction(Spawn::create(DisableCollision, jump, EnableCollision, dodgeMove, nullptr));
 		}
 		if (posOfPlayer.y - posOfMonster.y > this->sprite->getContentSize().height && posOfPlayer.y < 880)
@@ -117,7 +117,7 @@ void Monster::AIUpdate(float dt,const Vec2& posOfPlayer, Scene* scene)
 			/*此时AI将执行上跳*/
 			auto DisableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0000); });//不允许碰撞，防止穿模时出现的问题
 			auto jump = MoveBy::create(0.5, Vec2(0, this->sprite->getContentSize().height * 2.6f));
-			auto EnableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0100); });//恢复原有的CollisionBitmask
+			auto EnableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0010); });//恢复原有的CollisionBitmask
 			this->sprite->runAction(Spawn::create(DisableCollision, jump, EnableCollision, moveJump, nullptr));
 		}
 		else if (posOfMonster.y - posOfPlayer.y > this->sprite->getContentSize().height && posOfPlayer.y > 60
@@ -142,7 +142,23 @@ void Monster::AIUpdate(float dt,const Vec2& posOfPlayer, Scene* scene)
 
 bool Monster::getShot()
 {
-	return false;
+	bool getShot = false;
+	//auto listenerPhysics = EventListenerPhysicsContact::create();
+	//listenerPhysics->onContactBegin = [this,&getShot](PhysicsContact& contact)
+	//{
+	//	Node* node[2] = { contact.getShapeA()->getBody()->getNode() ,contact.getShapeB()->getBody()->getNode() };
+	//	if (node[0] && node[1])
+	//	{
+	//		int tag[2] = { node[0]->getTag(),node[1]->getTag() };
+	//		for (int i = 0; i < 2; i++)
+	//			if (tag[i] == -3 && tag[!i] == 10)//多个AI设计时这里写本怪物的tag
+	//				getShot = true;
+	//	}
+
+	//	return true;
+	//};
+	//_eventDispatcher->addEventListenerWithSceneGraphPriority(listenerPhysics, this);
+	return getShot;
 }
 
 

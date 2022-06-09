@@ -101,5 +101,15 @@ StartScene::StartScene()//构造函数中获取窗口相关参数
 	//在构造函数中进行窗口变量获取和音乐播放
 	visibleSize = Director::getInstance()->getVisibleSize();
 	origin = Director::getInstance()->getVisibleOrigin();
-	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("bgmusic.mp3");
+	auto instance = CocosDenshion::SimpleAudioEngine::getInstance();
+	float volume;
+	if (!instance->isBackgroundMusicPlaying())
+		volume = 1.0f;
+	else {
+		volume = instance->getBackgroundMusicVolume();
+		instance->stopBackgroundMusic(); //stop后无法恢复播放
+	}
+	instance->playBackgroundMusic("Music/Start.mp3", true);
+	instance->setBackgroundMusicVolume(volume);
+
 }

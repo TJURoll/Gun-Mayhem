@@ -21,6 +21,13 @@ bool GameScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	//音乐引擎
+	auto instance = CocosDenshion::SimpleAudioEngine::getInstance();
+	auto volume = instance->getBackgroundMusicVolume();
+	instance->stopBackgroundMusic(); //stop后无法恢复播放
+		instance->playBackgroundMusic("Music/Game.mp3", true);
+	instance->setBackgroundMusicVolume(volume);
+
 	//创建背景地图
 	auto bg = Sprite::create("mpbg.png");
 	auto contentSize = bg->getContentSize();
@@ -170,7 +177,6 @@ bool GameScene::init()
 			for (int i = 0; i < 2; i++)
 				if (tag[i] == 0 && tag[!i] == 100)
 					hero1.setJumpTimes(2);
-			CCLOG("onContact!!  tagA = %d, tagB = %d", tag[0], tag[1]);
 		}
 
 		return true;
@@ -317,7 +323,9 @@ void GameScene::addContactListener()
 				if (tag[i] == -3)//子弹
 				{
 					int firePower = static_cast<int>((node[i]->getName())[0]);
-					node[!i]->getPhysicsBody()->applyImpulse(Vec2(30 * MASS * (node[!i]->getPosition().x - node[i]->getPosition().x < 0 ? -firePower : firePower), 0));
+					auto impulse = 30 * MASS * (node[!i]->getPosition().x - node[i]->getPosition().x < 0 ? -firePower : firePower);
+					CCLOG("%f", impulse);
+					node[!i]->getPhysicsBody()->applyImpulse(Vec2(impulse, 0));
 					auto boomEffect = [node, i]() {
 						dynamic_cast<Sprite*>(node[i])->setTexture("explodeboom.png");
 						node[i]->getPhysicsBody()->setDynamic(false);
@@ -325,7 +333,7 @@ void GameScene::addContactListener()
 					node[i]->runAction(Sequence::create(CallFunc::create(boomEffect), DelayTime::create(.1f), RemoveSelf::create(), nullptr));
 					break;
 				}
-				if (tag[i] == -4)
+				if (tag[i] == -4)//接触箱子
 				{
 					node[!i]->removeAllChildrenWithCleanup(true);
 					_mouseListener->setEnabled(true);

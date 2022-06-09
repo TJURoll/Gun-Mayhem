@@ -37,7 +37,7 @@ bool ControlSettingScene::init()
 
 	//根据音乐播放情况创建开关菜单项
 	MenuItemToggle* toggleItem;
-	if (SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying()) {
+	if (SimpleAudioEngine::getInstance()->getBackgroundMusicVolume()) {
 		CCLOG("On init");
 		toggleItem = MenuItemToggle::createWithCallback(
 			[&](Ref* ref) {
@@ -45,11 +45,11 @@ bool ControlSettingScene::init()
 				if (item) {
 					if (item->getSelectedIndex() == 0) {
 						CCLOG("Play sound");
-						SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+						SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(1.f);
 					}
 					else if (item->getSelectedIndex() == 1) {
 						CCLOG("Silence");
-						SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+						SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.f);
 					}
 				}
 			}, onSpriteItem, offSpriteItem, NULL);
@@ -61,11 +61,11 @@ bool ControlSettingScene::init()
 				if (item) {
 					if (item->getSelectedIndex() == 0) {
 						CCLOG("Play sound");
-						SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+						SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.f);
 					}
 					else if (item->getSelectedIndex() == 1) {
 						CCLOG("Silence");
-						SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+						SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(1.f);
 					}
 				}
 			}, offSpriteItem, onSpriteItem, NULL);
