@@ -14,7 +14,7 @@ bool ControlSettingScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto background = Sprite::create("settingsbackground.png");
+	auto background = Sprite::create("settingsbackground.jpg");
 	background->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 	background->setPosition(origin.x, origin.y);
 	auto contentSize = background->getContentSize();
