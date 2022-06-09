@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "Entity.h"
 #include<algorithm>
+#include "editor-support/cocostudio/SimpleAudioEngine.h"
 USING_NS_CC;
 class Gun :public Sprite
 {
