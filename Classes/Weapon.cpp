@@ -40,16 +40,16 @@ void Gun::fire(Scene* scene, Entity* shooter)
 	auto bullet = Sprite::create("bullet.png");
 	bool direction = shooter->getDirection();//向左为true,向右为false
 	auto position = shooter->getSprite()->getPosition();
-	bullet->setPosition(Vec2(position.x + (direction ? -20 : 20), position.y));
+	bullet->setPosition(Vec2(position.x + (direction ? 70 : -70), position.y));
 	if (direction)
 		bullet->setFlippedX(true);
 	shooter->getSprite()->getPhysicsBody()->applyImpulse(Vec2(5 * MASS * (direction ? firepower : -firepower), 0));
 
-	auto physicsBody = PhysicsBody::createBox(bullet->getContentSize(), PhysicsMaterial(100.f, 0.f, 0.0f));// 密度，修复，摩擦
+	auto physicsBody = PhysicsBody::createBox(bullet->getContentSize(), PhysicsMaterial(0.f, 0.f, 0.0f));// 密度，修复，摩擦
 	physicsBody->setVelocity(Vec2(direction ? -bulletSpeed : bulletSpeed, 0));
 	physicsBody->setGravityEnable(false);
 	physicsBody->setRotationEnable(false);
-	if ((shooter->getTag()) / 10 == 0)//我方子弹
+	if ((shooter->getSprite()->getTag()) / 10 == 0)//我方子弹
 	{
 		physicsBody->setCategoryBitmask(0b10010);
 		physicsBody->setCollisionBitmask(0b1000);
@@ -57,6 +57,7 @@ void Gun::fire(Scene* scene, Entity* shooter)
 	}
 	else//敌方子弹
 	{
+		CCLOG("enemy");
 		physicsBody->setCategoryBitmask(0b10100);
 		physicsBody->setCollisionBitmask(0b0001);
 		physicsBody->setContactTestBitmask(0b0001);

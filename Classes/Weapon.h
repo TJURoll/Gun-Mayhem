@@ -20,7 +20,7 @@ public:
 class MachineGun : public Gun
 {
 public:
-	MachineGun() :Gun(.05f, 3, 4000) {};
+	MachineGun() :Gun(.05f, 3, 3000) {};
 	CREATE_FUNC(MachineGun);
 	virtual bool init();
 	virtual void bindShooter(Sprite* shooter);
@@ -28,7 +28,7 @@ public:
 class SniperGun :public  Gun
 {
 public:
-	SniperGun() :Gun(.6f, 15, 7000) {};
+	SniperGun() :Gun(.6f, 15, 5000) {};
 	CREATE_FUNC(SniperGun);
 	virtual bool init();
 	virtual void bindShooter(Sprite* shooter);
@@ -36,7 +36,7 @@ public:
 class HandGun :public Gun
 {
 public:
-	HandGun() :Gun(.3f, 8, 3000) {};
+	HandGun() :Gun(.3f, 8, 2000) {};
 	CREATE_FUNC(HandGun);
 	virtual bool init();
 	virtual void bindShooter(Sprite* shooter);

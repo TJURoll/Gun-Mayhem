@@ -7,6 +7,7 @@
 #include<map>
 #include"Entity.h"
 #include"Monster.h"
+#include"editor-support/cocostudio/SimpleAudioEngine.h"
 
 class GameScene : public cocos2d::Scene
 {
