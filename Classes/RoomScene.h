@@ -2,7 +2,7 @@
 #define _ROOMSCENE_
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-
+#include "Global.h"
 
 using namespace cocos2d;
 using namespace ui;

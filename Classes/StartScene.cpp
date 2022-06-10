@@ -102,7 +102,7 @@ Button* StartScene::buttonCreate(std::string titleText, pFunc switchSceneEvent)
 	return p;
 }
 
-void StartScene::buttonAdd(std::vector<Button*> buttonList) 
+void StartScene::buttonAdd(std::vector<Button*> buttonList)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();

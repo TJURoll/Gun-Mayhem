@@ -13,7 +13,7 @@ class StartScene : public Scene
 {
 private:
 	//按钮创建函数
-	Button* buttonCreate(std::string titleText,pFunc switchSceneEvent);
+	Button* buttonCreate(std::string titleText, pFunc switchSceneEvent);
 
 	//添加按钮到界面上
 	void buttonAdd(std::vector<Button*> buttonList);

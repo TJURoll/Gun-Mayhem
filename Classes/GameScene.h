@@ -1,14 +1,16 @@
 #ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
-#include"cocos2d.h"
-#include"Player.h"
-#include"Weapon.h"
-#include<map>
-#include"Entity.h"
-#include"Monster.h"
-//#include "PauseScene.h"
-#include"editor-support/cocostudio/SimpleAudioEngine.h"
+#include "cocos2d.h"
+#include "Player.h"
+#include "Weapon.h"
+#include <map>
+#include "Entity.h"
+#include "Monster.h"
+#include "PauseScene.h"
+#include "ResultScene.h"
+#include "Global.h"
+#include "editor-support/cocostudio/SimpleAudioEngine.h"
 
 class GameScene : public cocos2d::Scene
 {

@@ -43,7 +43,7 @@ bool RoomScene::init()
 	auto noneSpriteItem = MenuItemSprite::create(none, none);//创建两个精灵菜单项
 	auto AI2SpriteItem = MenuItemSprite::create(AI2, AI2);
 	auto toggleItem = MenuItemToggle::createWithCallback([&](Ref* ref) {
-	//函数返回ai个数。none返回1，AI2返回2
+		//函数返回ai个数。none返回1，AI2返回2
 		auto item = dynamic_cast<MenuItemToggle*>(ref);
 		if (item) {
 			if (item->getSelectedIndex() == 0) {
@@ -55,11 +55,11 @@ bool RoomScene::init()
 				setAInum(2);
 			}
 		}
-		
+
 		}, noneSpriteItem, AI2SpriteItem, NULL);//创建一个开关菜单项
-	
+
 	toggleItem->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-	toggleItem->setPosition(Vec2(origin.x + visibleSize.width * 4/5, origin.y + visibleSize.height * 5/12));
+	toggleItem->setPosition(Vec2(origin.x + visibleSize.width * 4 / 5, origin.y + visibleSize.height * 5 / 12));
 
 	//创建一个菜单
 	Menu* menu = Menu::create(toggleItem, NULL);
@@ -76,22 +76,22 @@ void RoomScene::setAInum(int num) {
 void RoomScene::buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type)
 {
 	switch (type) {
-		case Widget::TouchEventType::ENDED:
-			Director::getInstance()->popScene();
-			break;
-		default:
-			break;
+	case Widget::TouchEventType::ENDED:
+		Director::getInstance()->replaceScene(StartScene::create());
+		break;
+	default:
+		break;
 	}
 }
 
 void RoomScene::ContinuebuttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type)
 {
 	switch (type) {
-		case Widget::TouchEventType::ENDED:
-			//Director::getInstance()->replaceScene(GameScene::create());
-			Director::getInstance()->pushScene(GameScene::createScene());
-			break;
-		default:
-			break;
+	case Widget::TouchEventType::ENDED:
+		g_NumOfAI = AInum;
+		Director::getInstance()->replaceScene(GameScene::createScene());
+		break;
+	default:
+		break;
 	}
 }
