@@ -1,5 +1,4 @@
 #include"GameScene.h"
-#include"PauseScene.h"
 USING_NS_CC;
 
 Scene* GameScene::createScene()
@@ -43,8 +42,8 @@ bool GameScene::init()
 
 	/**************************************创建平台物理效果*******************************************************/
 	{
-		float transformX = contentSize.width / 300.0;
-		float transformY = contentSize.height / 176.0;
+		float transformX = contentSize.width / 300.f;
+		float transformY = contentSize.height / 176.f;
 		Size bodySize1 = cocos2d::Size((122 - 54) * transformX * sizeTransform_x, 1);
 		auto bodyPlatform1 = PhysicsBody::createEdgeBox(bodySize1);
 		auto Platform1 = Node::create();
@@ -201,7 +200,7 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event)
 		&& hero1.getJumpTimes() > 0)
 	{
 		auto DisableCollision = CallFunc::create([this]() {hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0000); });//不允许碰撞，防止穿模时出现的问题
-		auto jump = MoveBy::create(0.5, Vec2(0, hero1.sprite->getContentSize().height * 3.0));
+		auto jump = MoveBy::create(0.5f, Vec2(0, hero1.sprite->getContentSize().height * 3.f));
 		auto EnableCollision = CallFunc::create([this]() {hero1.sprite->getPhysicsBody()->setCollisionBitmask(0b0100); });//恢复原有的CollisionBitmask
 		hero1.sprite->runAction(Sequence::create(DisableCollision, jump, EnableCollision, nullptr));
 		hero1.setJumpTimes(hero1.getJumpTimes() - 1);
@@ -232,8 +231,8 @@ void GameScene::addBoxes(const float ft)
 	auto box = Sprite::create("box.png");
 	auto boxContentSize = box->getContentSize();
 	auto sceneSize = this->getContentSize();
-	int minX = boxContentSize.width * 2;
-	int maxX = sceneSize.width - minX;
+	int minX = static_cast<int>(boxContentSize.width * 2);
+	int maxX = static_cast<int>(sceneSize.width - minX);
 	int rangeX = maxX - minX;
 	int randomX = (rand() % rangeX) + minX;
 	box->setPosition(Vec2(randomX, sceneSize.height));//X坐标随机,Y坐标为顶
@@ -251,7 +250,7 @@ void GameScene::addBoxes(const float ft)
 void GameScene::update(float dt)
 {
 	//旋转人物精灵
-	hero1.sprite->runAction(RotateTo::create(0.1, 0));
+	hero1.sprite->runAction(RotateTo::create(0.1f, 0));
 
 
 	float moveX(0);
@@ -303,7 +302,8 @@ void GameScene::update(float dt)
 	}
 	if (hero1.getlifeNum() == 0)//当玩家的命为0时结束游戏
 	{
-		;//切换场景
+		g_Win = false;
+		Director::getInstance()->replaceScene(ResultScene::createScene());//切换场景
 	}
 
 	this->monster1.AIUpdate(dt, hero1.sprite->getPosition(),this);

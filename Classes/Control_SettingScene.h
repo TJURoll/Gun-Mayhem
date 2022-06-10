@@ -17,8 +17,6 @@ public:
 
 	// a selector callback
 	void buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type);
-	//// a menu callback
-	//void menuCallback(Ref* pSender, cocos2d::ui::Widget::TouchEventType type);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(ControlSettingScene);

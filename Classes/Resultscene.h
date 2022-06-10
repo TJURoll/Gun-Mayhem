@@ -3,6 +3,7 @@
 //显示游戏结果胜利或是失败
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include "Global.h"
 
 using namespace cocos2d;
 using namespace ui;

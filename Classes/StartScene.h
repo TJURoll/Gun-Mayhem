@@ -12,12 +12,12 @@ typedef void (*pFunc)(Ref*, Widget::TouchEventType);
 class StartScene : public Scene
 {
 private:
-	Size visibleSize;
-	Vec2 origin;
-	Button* buttonCreate(std::string titleText,pFunc switchSceneEvent);//按钮创建函数
-	void buttonAdd(std::vector<Button*> buttonList);//按钮添加函数
+	//按钮创建函数
+	Button* buttonCreate(std::string titleText, pFunc switchSceneEvent);
+
+	//添加按钮到界面上
+	void buttonAdd(std::vector<Button*> buttonList);
 public:
-	StartScene();
 	virtual bool init();
 	CREATE_FUNC(StartScene);
 };
