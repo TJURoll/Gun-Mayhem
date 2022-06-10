@@ -18,6 +18,7 @@ public:
 
 	void AIUpdate(float dt, const Vec2& posOfPlayer, Scene* scene);
 	bool getShot();
+	void dodgeMove(const Vec2 &posOfPlayer);
 private:
 
 protected:

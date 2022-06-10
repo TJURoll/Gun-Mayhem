@@ -86,17 +86,7 @@ void Monster::AIUpdate(float dt,const Vec2& posOfPlayer, Scene* scene)
 		/*此时怪物将检测自己是否中弹，如果中弹的话，将予以躲闪*/
 		if (getShot())
 		{
-			MoveBy* dodgeMove;
-			if (this->getDirection() && posOfPlayer.x < 1142)
-				dodgeMove = MoveBy::create(0.5f, Vec2(100, 0));
-			else if (!this->getDirection() && posOfPlayer.x > 300)
-				dodgeMove = MoveBy::create(0.5f, Vec2(-100, 0));
-			else
-				return;
-			auto DisableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0000); });//不允许碰撞，防止穿模时出现的问题
-			auto jump = MoveBy::create(0.5, Vec2(0, this->sprite->getContentSize().height * 2.6f));
-			auto EnableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0010); });//恢复原有的CollisionBitmask
-			this->sprite->runAction(Spawn::create(DisableCollision, jump, EnableCollision, dodgeMove, nullptr));
+			dodgeMove(posOfPlayer);
 		}
 		if (posOfPlayer.y - posOfMonster.y > this->sprite->getContentSize().height && posOfPlayer.y < 880)
 		{
@@ -159,6 +149,21 @@ bool Monster::getShot()
 	//};
 	//_eventDispatcher->addEventListenerWithSceneGraphPriority(listenerPhysics, this);
 	return getShot;
+}
+
+void Monster::dodgeMove(const Vec2& posOfPlayer)
+{
+	MoveBy* dodgeMove;
+	if (this->getDirection() && posOfPlayer.x < 1142)
+		dodgeMove = MoveBy::create(0.5f, Vec2(100, 0));
+	else if (!this->getDirection() && posOfPlayer.x > 300)
+		dodgeMove = MoveBy::create(0.5f, Vec2(-100, 0));
+	else
+		return;
+	auto DisableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0000); });//不允许碰撞，防止穿模时出现的问题
+	auto jump = MoveBy::create(0.5, Vec2(0, this->sprite->getContentSize().height * 2.6f));
+	auto EnableCollision = CallFunc::create([this]() {this->sprite->getPhysicsBody()->setCollisionBitmask(0b0010); });//恢复原有的CollisionBitmask
+	this->sprite->runAction(Spawn::create(DisableCollision, jump, EnableCollision, dodgeMove, nullptr));
 }
 
 void doubleAIcontrol(const Vec2& posOfPlayer, Monster* ai1, Monster* ai2, float dt, Scene* scene)
