@@ -18,6 +18,7 @@ private:
 	const float MASS = 10.f;
 	Player hero1 = ("Hero.png");//游戏中的玩家英雄
 	Monster monster1 = ("monster.png");//游戏中的怪物1
+	Monster monster2 = ("monster2.png");//游戏中的怪物2
 
 	std::map<cocos2d::EventKeyboard::KeyCode, bool>KeyMap;
 	EventListenerMouse* _mouseListener;
