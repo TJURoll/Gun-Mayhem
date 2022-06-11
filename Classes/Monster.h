@@ -25,6 +25,6 @@ protected:
 
 };
 
-void doubleAIcontrol(const Vec2& posOfPlayer, Monster* ai1, Monster* ai2, float dt, Scene* scene);
+void doubleAIcontrol(const Vec2& posOfPlayer, float dt, Scene* scene, Monster* ai1, Monster* ai2);
 
 #endif
