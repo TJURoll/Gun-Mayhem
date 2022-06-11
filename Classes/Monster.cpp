@@ -180,6 +180,7 @@ void doubleAIcontrol(const Vec2& posOfPlayer, Monster* ai1, Monster* ai2, float 
 	static float fireTime = 0;
 	static int fireTimeNum = 0;
 	stepTime += dt;
+	fireTime += dt;
 
 	/*此时会根据是否在场，交换主位*/
 	if (ai1->getPosition().y < 0 && ai2->getPosition().y>0)
@@ -364,17 +365,20 @@ void doubleAIcontrol(const Vec2& posOfPlayer, Monster* ai1, Monster* ai2, float 
 	}
 
 	/*****************************每隔0.88秒，怪物将刷新一次，检测是否需要射击**************************************/
-	if ((fireTime > 0.6f && fireTimeNum != 0) || (fireTimeNum == 0 && fireTime > 3.f))
+	if ((fireTime > 0.4f && fireTimeNum != 0) || (fireTimeNum == 0 && fireTime > 3.f))
 	{
-		/*此时会检查避免重叠互相射击*/
+		srand((unsigned)time(NULL));
+		if (rand() % (1 - 0 + 1) + 0)
+		{
+			if (fabs(posOfMonster1.y - posOfPlayer.y) < 30)
+				dynamic_cast<Gun*>(monsterFirst->sprite->getChildByName("gun"))->fire(scene, monsterFirst);
+		}
+		else
+		{
+			if (fabs(posOfMonster2.y - posOfPlayer.y) < 30)
+				dynamic_cast<Gun*>(monsterSecond->sprite->getChildByName("gun"))->fire(scene, monsterSecond);
+		}
 
-		if (fabs(posOfMonster1.y - posOfPlayer.y) < 20
-			&& (((monsterFirst->getDirection() == false) && (posOfMonster1.x > posOfMonster2.x)) || ((monsterFirst->getDirection() == true) && (posOfMonster1.x < posOfMonster2.x))))
-			dynamic_cast<Gun*>(monsterFirst->sprite->getChildByName("gun"))->fire(scene, monsterFirst);
-
-		if (fabs(posOfMonster2.y - posOfPlayer.y) < 20
-			&& (((monsterSecond->getDirection() == false) && (posOfMonster2.x > posOfMonster1.x)) || ((monsterSecond->getDirection() == true) && (posOfMonster2.x < posOfMonster1.x))))
-			dynamic_cast<Gun*>(monsterSecond->sprite->getChildByName("gun"))->fire(scene, monsterSecond);
 
 
 		fireTime = 0;
