@@ -18,9 +18,13 @@ public:
 
 	void AIUpdate(float dt, const Vec2& posOfPlayer, Scene* scene);
 	bool getShot();
+	void dodgeMove(const Vec2 &posOfPlayer);
 private:
 
 protected:
 
 };
+
+void doubleAIcontrol(const Vec2& posOfPlayer, Monster* ai1, Monster* ai2, float dt, Scene* scene);
+
 #endif
