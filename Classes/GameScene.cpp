@@ -5,7 +5,7 @@ Scene* GameScene::createScene()
 {
 	auto scene = GameScene::create();
 	scene->initWithPhysics();
-	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+//	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 	scene->getPhysicsWorld()->setGravity(Vec2(0, -800.f));//设置了重力为800像素每秒的平方
 	return scene;
 }
@@ -390,9 +390,25 @@ void GameScene::addContactListener()
 				if (tag[i] == -3)//子弹
 				{
 					int firePower = static_cast<int>((node[i]->getName())[0]);
-					auto impulse = 30 * MASS * (node[!i]->getPosition().x - node[i]->getPosition().x < 0 ? -firePower : firePower);
-					CCLOG("%f", impulse);
-					node[!i]->getPhysicsBody()->applyImpulse(Vec2(impulse, 0));
+
+					if (node[!i]->getTag() > 0 && node[!i]->getTag() / 20 == 0)
+					{
+						auto label = Label::createWithTTF("HIT", "fonts/Marker Felt.ttf", 60);
+						label->setScaleX(1.5f);
+						label->setTextColor(Color4B(255, 80, 60, 180));
+						label->setPosition(Vec2(50, 150));
+						node[i]->addChild(label);
+						auto impulse = 30 * MASS * (node[!i]->getPosition().x - node[i]->getPosition().x < 0 ? -firePower : firePower);
+						if (rand() % 10 == 0)
+						{
+							impulse *= 3;
+							label->setString("CRIT");
+							label->setScaleX(2.0f);
+							label->setScaleY(1.5f);
+							label->setTextColor(Color4B(255, 0, 0, 180));
+						}
+						node[!i]->getPhysicsBody()->applyImpulse(Vec2(impulse, 0));
+					}
 					auto boomEffect = [node, i]() {
 						dynamic_cast<Sprite*>(node[i])->setTexture("explodeboom.png");
 						node[i]->getPhysicsBody()->setDynamic(false);
