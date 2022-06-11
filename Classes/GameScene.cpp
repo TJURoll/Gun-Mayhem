@@ -121,22 +121,19 @@ bool GameScene::init()
 	monster1.sprite->setPhysicsBody(bodymonster1);
 	monster1.sprite->setTag(10);//第一个怪物标签设为10
 	this->addChild(monster1.sprite);
-	
-
+#if 1
 	/*********************************************初始化AI怪物02角色*******************************************************/
-	if (g_NumOfAI == 2)
-	{
-		monster2.sprite->setPosition(origin.x + visibleSize.width / 2 - 100, origin.y + visibleSize.height + hero1.sprite->getContentSize().height);
-		auto bodymonster2 = PhysicsBody::createBox(monster2.sprite->getContentSize(), PhysicsMaterial(1.f, 0.f, .8f));
-		bodymonster2->setRotationEnable(false);
-		bodymonster2->setCategoryBitmask(0b1111);
-		bodymonster2->setCollisionBitmask(0b0011);
-		bodymonster2->setContactTestBitmask(0b0011);//敌方角色的掩码
-		bodymonster2->setMass(MASS);
-		monster2.sprite->setPhysicsBody(bodymonster2);
-		monster2.sprite->setTag(11);//第二个怪物标签设为11
-		this->addChild(monster2.sprite);
-	}
+	monster2.sprite->setPosition(origin.x + visibleSize.width / 2 - 100, origin.y + visibleSize.height + hero1.sprite->getContentSize().height);
+	auto bodymonster2 = PhysicsBody::createBox(monster2.sprite->getContentSize(), PhysicsMaterial(1.f, 0.f, .8f));
+	bodymonster2->setRotationEnable(false);
+	bodymonster2->setCategoryBitmask(0b1111);
+	bodymonster2->setCollisionBitmask(0b0011);
+	bodymonster2->setContactTestBitmask(0b0011);//敌方角色的掩码
+	bodymonster2->setMass(MASS);
+	monster2.sprite->setPhysicsBody(bodymonster2);
+	monster2.sprite->setTag(11);//第二个怪物标签设为11
+	this->addChild(monster2.sprite);
+#endif
 
 	/*********************************************玩家初始枪械*******************************************************/
 	Gun* initGun = HandGun::create();
@@ -145,14 +142,11 @@ bool GameScene::init()
 	/********************************************AI怪物01初始枪械*******************************************************/
 	Gun* initMonsterGun = MachineGun::create();
 	initMonsterGun->bindShooter(monster1.sprite);
-
+#if 1
 	/********************************************AI怪物02初始枪械*******************************************************/
-	if (g_NumOfAI == 2)
-	{
-		Gun* initMonster2Gun = MachineGun::create();
-		initMonster2Gun->bindShooter(monster2.sprite);
-	}
-
+	Gun* initMonster2Gun = MachineGun::create();
+	initMonster2Gun->bindShooter(monster2.sprite);
+#endif
 	/*********************************************掉落武器***********************************************************/
 	dropWeapons();
 
@@ -316,61 +310,31 @@ void GameScene::update(float dt)
 		hero1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		hero1.setlifeNum(hero1.getlifeNum() - 1);
 	}
-	if (monster1.getlifeNum() != 0&&monster1.sprite->getPositionY() < 0)
+	if (monster1.sprite->getPositionY() < 0)
 	{
 		monster1.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + monster1.sprite->getContentSize().height));//回到初始位置
 		monster1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		monster1.setlifeNum(monster1.getlifeNum() - 1);
 	}
-	
-	if (g_NumOfAI == 2)
+#if 1
+	if (monster2.sprite->getPositionY() < 0)
 	{
-		if (monster2.getlifeNum() != 0 && monster2.sprite->getPositionY() < 0)
-		{
-			monster2.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + monster2.sprite->getContentSize().height));//回到初始位置
-			monster2.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			monster2.setlifeNum(monster2.getlifeNum() - 1);
-		}
+		monster2.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + monster2.sprite->getContentSize().height));//回到初始位置
+		monster2.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
+		monster2.setlifeNum(monster2.getlifeNum() - 1);
 	}
-
+#endif
 	if (hero1.getlifeNum() == 0)//当玩家的命为0时结束游戏
 	{
 		g_Win = false;
 		Director::getInstance()->replaceScene(ResultScene::createScene());//切换场景
 	}
-	if (g_NumOfAI == 1)
-	{
-		if (monster1.getlifeNum() == 0)
-		{
-			g_Win = true;
-			Director::getInstance()->replaceScene(ResultScene::createScene());//切换场景
-		}
-		this->monster1.AIUpdate(dt, hero1.sprite->getPosition(), this);
-	}
-	else
-	{
-		Monster* ai1 = &monster1;
-		Monster* ai2 = &monster2;
-
-		if (monster1.getlifeNum() == 0)//当玩家的命为0时结束游戏
-		{
-			this->removeChild(monster1.sprite);
-			ai1 = nullptr;
-		}
-		if (monster2.getlifeNum() == 0)//当玩家的命为0时结束游戏
-		{
-			this->removeChild(monster2.sprite);
-			ai2 = nullptr;
-		}
-		if (monster1.getlifeNum() == 0 && monster2.getlifeNum() == 0)
-		{
-			g_Win = true;
-			Director::getInstance()->replaceScene(ResultScene::createScene());//切换场景
-		}
-
-		/*此时采取单独的一个双控制函数，避免延时过于严重的问题*/
-		doubleAIcontrol(hero1.sprite->getPosition(), dt, this, ai1, ai2);
-	}
+#if 0
+	this->monster1.AIUpdate(dt, hero1.sprite->getPosition(), this);
+#else
+	/*此时采取单独的一个双控制函数，避免延时过于严重的问题*/
+	doubleAIcontrol(hero1.sprite->getPosition(), &monster1, &monster2, dt, this);
+#endif
 }
 void GameScene::addContactListener()
 {
