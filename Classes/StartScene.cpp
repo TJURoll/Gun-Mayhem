@@ -86,7 +86,7 @@ bool StartScene::init()
 	return true;
 }
 
-Button* StartScene::buttonCreate(std::string titleText, pFunc switchSceneEvent)
+Button* StartScene::buttonCreate(const std::string& titleText, pFunc switchSceneEvent)const
 {
 	Button* p = new(std::nothrow) Button;
 	if (p == nullptr)
@@ -102,7 +102,7 @@ Button* StartScene::buttonCreate(std::string titleText, pFunc switchSceneEvent)
 	return p;
 }
 
-void StartScene::buttonAdd(std::vector<Button*> buttonList)
+void StartScene::buttonAdd(const std::vector<Button*> &buttonList)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();

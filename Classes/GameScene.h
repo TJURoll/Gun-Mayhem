@@ -4,18 +4,18 @@
 #include "cocos2d.h"
 #include "Player.h"
 #include "Weapon.h"
-#include <map>
 #include "Entity.h"
 #include "Monster.h"
 #include "PauseScene.h"
 #include "ResultScene.h"
 #include "Global.h"
+#include "MyTime.h"
 #include "editor-support/cocostudio/SimpleAudioEngine.h"
 
 class GameScene : public cocos2d::Scene
 {
 private:
-	const float MASS = 10.f;
+	static constexpr float MASS = 10.0f;
 	Player hero1 = ("Hero.png");//游戏中的玩家英雄
 	Monster monster1 = ("monster.png");//游戏中的怪物1
 	Monster monster2 = ("monster2.png");//游戏中的怪物2
@@ -54,6 +54,7 @@ private:
 	//随机生成三种枪中的一个
 	Gun* randomGun();
 
+	void timeUpdate(float ft);
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
 };

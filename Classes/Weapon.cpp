@@ -1,6 +1,6 @@
 #include "Weapon.h"
 
-Gun::Gun(float shootingInterval, int firepower, int bulletSpeed) :shootingInterval(shootingInterval), firepower(firepower), bulletSpeed(bulletSpeed) {}
+Gun::Gun(const float& shootingInterval,const int& firepower,const int& bulletSpeed) :shootingInterval(shootingInterval), firepower(firepower), bulletSpeed(bulletSpeed) {}
 
 void Gun::stopAWhile(EventListener* Listener, float interval) {
 	if (!interval)
