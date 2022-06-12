@@ -34,6 +34,7 @@ bool RoomScene::init()
 	ContinueButton->setPosition(Vec2(origin.x + visibleSize.width * 6 / 7, origin.y + visibleSize.height * 2 / 7));
 	this->addChild(ContinueButton);
 
+	
 
 	//AI数量选择
 	auto none = Sprite::create("none.jpg");//创建两个精灵
@@ -60,9 +61,36 @@ bool RoomScene::init()
 
 	toggleItem->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 	toggleItem->setPosition(Vec2(origin.x + visibleSize.width * 4 / 5, origin.y + visibleSize.height * 5 / 12));
+	
+	//是否为无限生命的全局变量
+	bool Life_infinite;
+	//无限生命按钮
+	auto Life1 = Sprite::create("life1.jpg");//创建两个精灵
+	auto Life2 = Sprite::create("life2.jpg");
+	Life1->setScale(1.5f);
+	Life2->setScale(1.5f);
+	auto Life1SpriteItem = MenuItemSprite::create(Life1, Life1);//创建两个精灵菜单项
+	auto Life2SpriteItem = MenuItemSprite::create(Life2, Life2);
+	auto toggleItem2 = MenuItemToggle::createWithCallback([&](Ref* ref) {
+		auto item2 = dynamic_cast<MenuItemToggle*>(ref);
+		if (item2) {
+			if (item2->getSelectedIndex() == 0) {
+				CCLOG("limited life");
+				Life_infinite = false;
+			}
+			else if (item2->getSelectedIndex() == 1) {
+				CCLOG("infinite life");
+				Life_infinite =true;
+			}
+		}
+
+		}, Life1SpriteItem, Life2SpriteItem, NULL);//创建一个开关菜单项
+
+	toggleItem2->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+	toggleItem2->setPosition(Vec2(origin.x + visibleSize.width * 3 / 5, origin.y + visibleSize.height * 3 / 14));
 
 	//创建一个菜单
-	Menu* menu = Menu::create(toggleItem, NULL);
+	Menu* menu = Menu::create(toggleItem,toggleItem2,NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu);
 	return true;
@@ -83,6 +111,7 @@ void RoomScene::buttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType typ
 		break;
 	}
 }
+
 
 void RoomScene::ContinuebuttonCallBack(Ref* ref, cocos2d::ui::Widget::TouchEventType type)
 {
