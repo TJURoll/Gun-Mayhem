@@ -7,12 +7,12 @@ USING_NS_CC;
 class Gun :public Sprite
 {
 private:
-	const float MASS = 10.f;
+	static constexpr float MASS = 10.f;
 	float shootingInterval;//射击间隔，由stopAWhile具体实现
 	int firepower;//击退效果
 	int bulletSpeed;//子弹速度
 public:
-	Gun(float shootingInterval, int firepower, int bulletSpeed);
+	Gun(const float& shootingInterval,const int& firepower,const int& bulletSpeed);
 	virtual void bindShooter(Sprite* shooter) = 0;//将枪和角色绑定
 	void stopAWhile(EventListener* Listener, float interval = 0);
 	void fire(Scene* scene, Entity* shooter);//开火

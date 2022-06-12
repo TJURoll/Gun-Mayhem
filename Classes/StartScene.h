@@ -13,10 +13,10 @@ class StartScene : public Scene
 {
 private:
 	//按钮创建函数
-	Button* buttonCreate(std::string titleText, pFunc switchSceneEvent);
+	Button* buttonCreate(const std::string& titleText, pFunc switchSceneEvent)const;
 
 	//添加按钮到界面上
-	void buttonAdd(std::vector<Button*> buttonList);
+	void buttonAdd(const std::vector<Button*>& buttonList);
 public:
 	virtual bool init();
 	CREATE_FUNC(StartScene);

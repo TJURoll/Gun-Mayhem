@@ -9,7 +9,12 @@ Scene* GameScene::createScene()
 	scene->getPhysicsWorld()->setGravity(Vec2(0, -800.f));//设置了重力为800像素每秒的平方
 	return scene;
 }
-
+void GameScene::timeUpdate(float ft)
+{
+	Time* clock=dynamic_cast<Time*>(this->getChildByName("clock"));
+	clock->timeUpdate();
+	
+}
 bool GameScene::init()
 {
 	//检测初始化是否成功
@@ -38,6 +43,12 @@ bool GameScene::init()
 	Size sizeOfbg = bg->getContentSize();
 	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(bg);
+
+
+	//时间显示
+	auto time=Time::create();
+	time->addClock(this);
+	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::timeUpdate), 1.f);
 
 
 	/**************************************创建平台物理效果*******************************************************/
@@ -207,6 +218,15 @@ bool GameScene::init()
 	//2.检测道具碰撞相关的监听器
 	addContactListener();//监听器直接加在了场景之上
 
+	//生命系统可视化
+	auto Vitality = Sprite::create("vitality.png");
+	auto label = Label::createWithTTF("5", "fonts/Marker Felt.ttf", 32);
+	label->setTag(-10);
+	Vitality->setPosition(Vec2(Vitality->getContentSize().width / 2, visibleSize.height - Vitality->getContentSize().height));
+	label->setPosition(Vec2(Vitality->getContentSize().width + label->getContentSize().width, visibleSize.height - Vitality->getContentSize().height));
+	this->addChild(label);
+	this->addChild(Vitality);
+
    //更新函数
 	this->scheduleUpdate();
 	return true;
@@ -306,6 +326,12 @@ void GameScene::update(float dt)
 	Vec2 rePosition(moveX, 0);
 	auto moveBy = MoveBy::create(0.5f, rePosition);
 	hero1.sprite->runAction(moveBy);
+
+	std::string Life = ":";
+	char Num = (hero1.getlifeNum() + '0');
+	Life += Num;
+	auto label = getChildByTag(-10);
+	static_cast<Label*>(label)->setString(Life);
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
