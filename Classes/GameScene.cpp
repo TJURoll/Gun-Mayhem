@@ -5,15 +5,15 @@ Scene* GameScene::createScene()
 {
 	auto scene = GameScene::create();
 	scene->initWithPhysics();
-//	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	//	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 	scene->getPhysicsWorld()->setGravity(Vec2(0, -800.f));//设置了重力为800像素每秒的平方
 	return scene;
 }
 void GameScene::timeUpdate(float ft)
 {
-	Time* clock=dynamic_cast<Time*>(this->getChildByName("clock"));
+	Time* clock = dynamic_cast<Time*>(this->getChildByName("clock"));
 	clock->timeUpdate();
-	
+
 }
 bool GameScene::init()
 {
@@ -30,7 +30,7 @@ bool GameScene::init()
 	auto instance = CocosDenshion::SimpleAudioEngine::getInstance();
 	auto volume = instance->getBackgroundMusicVolume();
 	instance->stopBackgroundMusic(); //stop后无法恢复播放
-		instance->playBackgroundMusic("Music/Game.mp3", true);
+	instance->playBackgroundMusic("Music/Game.mp3", true);
 	instance->setBackgroundMusicVolume(volume);
 
 	//创建背景地图
@@ -46,7 +46,7 @@ bool GameScene::init()
 
 
 	//时间显示
-	auto time=Time::create();
+	auto time = Time::create();
 	time->addClock(this);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::timeUpdate), 1.f);
 
@@ -132,7 +132,7 @@ bool GameScene::init()
 	monster1.sprite->setPhysicsBody(bodymonster1);
 	monster1.sprite->setTag(10);//第一个怪物标签设为10
 	this->addChild(monster1.sprite);
-	
+
 
 	/*********************************************初始化AI怪物02角色*******************************************************/
 	if (g_NumOfAI == 2)
@@ -220,14 +220,18 @@ bool GameScene::init()
 
 	//生命系统可视化
 	auto Vitality = Sprite::create("vitality.png");
-	auto label = Label::createWithTTF("5", "fonts/Marker Felt.ttf", 32);
+	Label* label;
+	if (!g_InfiniteLives)
+		label = Label::createWithTTF("5", "fonts/Marker Felt.ttf", 32);
+	else
+		label = Label::createWithTTF("Infinite", "fonts/Marker Felt.ttf", 32);
 	label->setTag(-10);
 	Vitality->setPosition(Vec2(Vitality->getContentSize().width / 2, visibleSize.height - Vitality->getContentSize().height));
 	label->setPosition(Vec2(Vitality->getContentSize().width + label->getContentSize().width, visibleSize.height - Vitality->getContentSize().height));
 	this->addChild(label);
 	this->addChild(Vitality);
 
-   //更新函数
+	//更新函数
 	this->scheduleUpdate();
 	return true;
 }
@@ -327,11 +331,14 @@ void GameScene::update(float dt)
 	auto moveBy = MoveBy::create(0.5f, rePosition);
 	hero1.sprite->runAction(moveBy);
 
-	std::string Life = ":";
-	char Num = (hero1.getlifeNum() + '0');
-	Life += Num;
-	auto label = getChildByTag(-10);
-	static_cast<Label*>(label)->setString(Life);
+	if (!g_InfiniteLives)
+	{
+		std::string Life = ":";
+		char Num = (hero1.getlifeNum() + '0');
+		Life += Num;
+		auto label = getChildByTag(-10);
+		static_cast<Label*>(label)->setString(Life);
+	}
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -340,15 +347,16 @@ void GameScene::update(float dt)
 	{
 		hero1.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + hero1.sprite->getContentSize().height));//回到初始位置
 		hero1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
-		hero1.setlifeNum(hero1.getlifeNum() - 1);
+		if (!g_InfiniteLives)
+			hero1.setlifeNum(hero1.getlifeNum() - 1);
 	}
-	if (monster1.getlifeNum() != 0&&monster1.sprite->getPositionY() < 0)
+	if (monster1.getlifeNum() != 0 && monster1.sprite->getPositionY() < 0)
 	{
 		monster1.sprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height + monster1.sprite->getContentSize().height));//回到初始位置
 		monster1.sprite->getPhysicsBody()->setVelocity(Vec2(0, 0));
 		monster1.setlifeNum(monster1.getlifeNum() - 1);
 	}
-	
+
 	if (g_NumOfAI == 2)
 	{
 		if (monster2.getlifeNum() != 0 && monster2.sprite->getPositionY() < 0)
