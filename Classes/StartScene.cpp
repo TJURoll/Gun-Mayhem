@@ -2,7 +2,7 @@
 #include "Control_SettingScene.h" 
 #include "GameScene.h"
 #include "RoomScene.h"
-
+#include "RankLayer.h"
 bool StartScene::init()
 {
 	if (!Scene::init())
@@ -13,6 +13,9 @@ bool StartScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
+	
+	auto rankLayer = RankLayer::create();
+	this->addChild(rankLayer,1);
 	//±≥æ∞“Ù¿÷øÿ÷∆
 	auto instance = CocosDenshion::SimpleAudioEngine::getInstance();
 	float volume;

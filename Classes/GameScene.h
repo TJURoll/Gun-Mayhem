@@ -16,6 +16,7 @@ class GameScene : public cocos2d::Scene
 {
 private:
 	static constexpr float MASS = 10.0f;
+	int score = 0;
 	Player hero1 = ("Hero.png");//游戏中的玩家英雄
 	Monster monster1 = ("monster.png");//游戏中的怪物1
 	Monster monster2 = ("monster2.png");//游戏中的怪物2
@@ -55,6 +56,8 @@ private:
 	Gun* randomGun();
 
 	void timeUpdate(float ft);
+
+	void output();
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
 };

@@ -376,6 +376,7 @@ void GameScene::update(float dt)
 	{
 		if (monster1.getlifeNum() == 0)
 		{
+			output();
 			g_Win = true;
 			Director::getInstance()->replaceScene(ResultScene::createScene());//切换场景
 		}
@@ -398,6 +399,7 @@ void GameScene::update(float dt)
 		}
 		if (monster1.getlifeNum() == 0 && monster2.getlifeNum() == 0)
 		{
+			output();
 			g_Win = true;
 			Director::getInstance()->replaceScene(ResultScene::createScene());//切换场景
 		}
@@ -427,6 +429,7 @@ void GameScene::addContactListener()
 
 					if (node[!i]->getTag() > 0 && node[!i]->getTag() / 20 == 0)
 					{
+						score += 1;
 						auto label = Label::createWithTTF("HIT", "fonts/Marker Felt.ttf", 60);
 						label->setScaleX(1.5f);
 						label->setTextColor(Color4B(255, 80, 60, 180));
@@ -489,4 +492,20 @@ Gun* GameScene::randomGun()
 	return p;
 }
 
-
+void GameScene::output()
+{
+	string playerName = "Player1";
+	Time* clock = dynamic_cast<Time*>(this->getChildByName("clock"));
+	int myTime = int(*clock);//类型转换函数
+	if (g_NumOfAI == 2)
+		score += 50;
+	if (myTime < 200)
+		score += 100 - myTime / 2;
+	score += hero1.getlifeNum() * 10;
+	auto fileUtiles = FileUtils::getInstance();
+	string filePath = fileUtiles->fullPathForFilename("score.txt");
+	ofstream outfile;
+	outfile.open(filePath, ios::app);
+	outfile << playerName << ' ' << clock->timeShow() << ' ' << score << endl;
+	outfile.close();
+}
