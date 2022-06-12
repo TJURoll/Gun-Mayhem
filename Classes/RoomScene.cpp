@@ -34,7 +34,7 @@ bool RoomScene::init()
 	ContinueButton->setPosition(Vec2(origin.x + visibleSize.width * 6 / 7, origin.y + visibleSize.height * 2 / 7));
 	this->addChild(ContinueButton);
 
-	
+
 
 	//AI数量选择
 	auto none = Sprite::create("none.jpg");//创建两个精灵
@@ -61,10 +61,9 @@ bool RoomScene::init()
 
 	toggleItem->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 	toggleItem->setPosition(Vec2(origin.x + visibleSize.width * 4 / 5, origin.y + visibleSize.height * 5 / 12));
-	
-	//是否为无限生命的全局变量
-	bool Life_infinite;
+
 	//无限生命按钮
+	g_InfiniteLives = false;
 	auto Life1 = Sprite::create("life1.jpg");//创建两个精灵
 	auto Life2 = Sprite::create("life2.jpg");
 	Life1->setScale(1.5f);
@@ -76,11 +75,11 @@ bool RoomScene::init()
 		if (item2) {
 			if (item2->getSelectedIndex() == 0) {
 				CCLOG("limited life");
-				Life_infinite = false;
+				g_InfiniteLives = false;
 			}
 			else if (item2->getSelectedIndex() == 1) {
 				CCLOG("infinite life");
-				Life_infinite =true;
+				g_InfiniteLives = true;
 			}
 		}
 
@@ -90,7 +89,7 @@ bool RoomScene::init()
 	toggleItem2->setPosition(Vec2(origin.x + visibleSize.width * 3 / 5, origin.y + visibleSize.height * 3 / 14));
 
 	//创建一个菜单
-	Menu* menu = Menu::create(toggleItem,toggleItem2,NULL);
+	Menu* menu = Menu::create(toggleItem, toggleItem2, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu);
 	return true;

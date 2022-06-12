@@ -8,7 +8,7 @@ void Time::timeUpdate()
 		minute++;
 		second = 0;
 	}
-	this->setString(timeShow());
+	this->setString("TIME  "+timeShow());
 }
 
 string Time::timeShow()
